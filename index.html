@@ -34,7 +34,6 @@ h2{font-size:1.05rem;margin:0 0 8px;font-weight:600}
 .row:first-of-type{border-top:0}
 .row input[type=checkbox]{width:22px;height:22px;accent-color:var(--ok);flex:none}
 .row label{flex:1}
-.row.done label{color:var(--mute);text-decoration:line-through}
 .row .x{font:inherit;background:none;border:0;color:var(--mute);font-size:1.3rem;width:44px;height:44px}
 textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px}
 textarea{min-height:120px;resize:vertical}
@@ -266,8 +265,8 @@ function prayer(){
   list.forEach(function(p){
     var on=done.indexOf(p.id)>-1,id='c'+p.id;
     var cb=h('input',{type:'checkbox',id:id});cb.checked=on;
-    cb.onchange=function(){var a=data.prayed[k]||[];a=a.filter(function(x){return x!==p.id});if(cb.checked)a.push(p.id);data.prayed[k]=a;save();row.className='row'+(cb.checked?' done':'')};
-    var row=h('div',{class:'row'+(on?' done':'')},[cb,h('label',{for:id,text:p.name})]);pc.appendChild(row);
+    cb.onchange=function(){var a=data.prayed[k]||[];a=a.filter(function(x){return x!==p.id});if(cb.checked)a.push(p.id);data.prayed[k]=a;save()};
+    var row=h('div',{class:'row'},[cb,h('label',{for:id,text:p.name})]);pc.appendChild(row);
   });
   box.appendChild(pc);
   box.appendChild(people());
