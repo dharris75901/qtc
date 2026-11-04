@@ -99,7 +99,7 @@ function quiet(){
   ta.value=data.notes[k]||'';
   var sv=h('p',{class:'saved'});
   ta.oninput=function(){data.notes[k]=ta.value;save();sv.textContent='Saved'};
-  box.appendChild(h('div',{class:'card'},[h('h2',{text:'Note'}),h('p',{text:'What did God reveal about himself today?',style:'font-weight:600;margin:0 0 6px'}),h('p',{text:'What did God reveal about me today?',style:'font-weight:600;margin:0 0 10px'}),ta,sv]));
+  box.appendChild(h('div',{class:'card'},[h('h2',{text:'Note'}),ta,sv]));
   return box;
 }
 var back='quiet';
@@ -139,7 +139,7 @@ function gospel(){
     gta.value=data.notes[gk]||'';
     var gsv=h('p',{class:'saved'});
     gta.oninput=function(){data.notes[gk]=gta.value;save();gsv.textContent='Saved'};
-    box.appendChild(h('div',{class:'card'},[h('h2',{text:'Note for Day '+next.n}),h('p',{text:'What did God reveal about himself today?',style:'font-weight:600;margin:0 0 6px'}),h('p',{text:'What did God reveal about me today?',style:'font-weight:600;margin:0 0 10px'}),gta,gsv]));
+    box.appendChild(h('div',{class:'card'},[h('h2',{text:'Note for Day '+next.n}),gta,gsv]));
   }
   GOS.forEach(function(g){
     var card=bookCard('g',g[0],list,done,next);
@@ -180,7 +180,7 @@ function ntplan(){
     nta.value=data.notes[nk]||'';
     var nsv=h('p',{class:'saved'});
     nta.oninput=function(){data.notes[nk]=nta.value;save();nsv.textContent='Saved'};
-    box.appendChild(h('div',{class:'card'},[h('h2',{text:'Note for Day '+next.n}),h('p',{text:'What did God reveal about himself today?',style:'font-weight:600;margin:0 0 6px'}),h('p',{text:'What did God reveal about me today?',style:'font-weight:600;margin:0 0 10px'}),nta,nsv]));
+    box.appendChild(h('div',{class:'card'},[h('h2',{text:'Note for Day '+next.n}),nta,nsv]));
   }
   NT.forEach(function(b){
     var card=bookCard('n',b[0],list,done,next);
@@ -212,7 +212,7 @@ function planPage(o){
     nta.value=data.notes[nk]||'';
     var nsv=h('p',{class:'saved'});
     nta.oninput=function(){data.notes[nk]=nta.value;save();nsv.textContent='Saved'};
-    box.appendChild(h('div',{class:'card'},[h('h2',{text:'Note for Day '+next.n}),h('p',{text:'What did God reveal about himself today?',style:'font-weight:600;margin:0 0 6px'}),h('p',{text:'What did God reveal about me today?',style:'font-weight:600;margin:0 0 10px'}),nta,nsv]));
+    box.appendChild(h('div',{class:'card'},[h('h2',{text:'Note for Day '+next.n}),nta,nsv]));
   }
   o.books.forEach(function(b){
     var card=bookCard(o.ip,b[0],list,done,next);
@@ -247,7 +247,6 @@ function qtPage(){
   box.appendChild(infoCard('qt-story','My Quiet Time',QT_STORY.map(function(t){return h('p',{text:t})})));
   box.appendChild(infoCard('qt-keys','The Quiet Time Challenge',[h('p',{text:QT_INTRO}),h('ol',{class:'rules'},QT_KEYS.map(function(t){return h('li',{text:t})}))]));
   var list=data.qt||[];
-  if(!list.length)box.appendChild(h('p',{class:'empty',text:'No entries yet. Your saved quiet times will appear here.'}));
   list.forEach(function(e){
     var when=new Date(e.ts).toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
     var del=h('button',{class:'rules-link',type:'button',text:'Delete',style:'margin:8px 0 0;min-height:40px;font-size:.8rem'});
