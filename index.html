@@ -45,6 +45,10 @@ textarea{min-height:120px;resize:vertical}
 .rules-link{display:block;font:inherit;font-size:.9rem;color:var(--accent);background:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;min-height:44px;margin:0 auto 16px}
 .rules{padding-left:22px;margin:0 0 12px}.rules li{margin:0 0 8px}
 .card p{margin:0 0 10px}
+.streaks{display:flex;gap:10px;margin:0 0 4px}
+.streak{flex:1;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center}
+.streak b{display:block;font-size:1.5rem;line-height:1.3;color:var(--gold)}
+.streak span{font-size:.8rem;color:var(--mute)}
 .book>summary{cursor:pointer;font-weight:600;font-size:1.05rem;min-height:44px;display:flex;align-items:center;list-style:none}
 .book>summary::-webkit-details-marker{display:none}
 .book>summary::after{content:'\25B8';margin-left:auto;color:var(--mute)}
@@ -102,8 +106,26 @@ function quiet(){
   box.appendChild(h('div',{class:'card'},[h('h2',{text:'Note'}),ta,sv]));
   return box;
 }
+function today0(){var d=new Date();d.setHours(12,0,0,0);return d}
+function logAct(t,n,on){var L=(data.clog||[]).filter(function(e){return !(e.t===t&&e.n===n)});if(on)L.push({d:key(today0()),t:t,n:n});data.clog=L}
+function chSet(){var s={};(data.clog||[]).forEach(function(e){s[e.d]=1});for(var k in data.notes){if(/^\d{4}-\d{1,2}-\d{1,2}$/.test(k)&&(data.notes[k]||'').trim())s[k]=1}return s}
+function prSet(){var s={};for(var k in data.prayed){if((data.prayed[k]||[]).length)s[k]=1}return s}
+function streakOf(s){
+  var d=today0(),cur=0;
+  if(!s[key(d)])d.setDate(d.getDate()-1);
+  while(s[key(d)]){cur++;d.setDate(d.getDate()-1)}
+  var ts=Object.keys(s).map(function(k){var p=k.split('-');return Date.UTC(+p[0],+p[1]-1,+p[2])}).sort(function(a,b){return a-b});
+  var best=0,run=0,prev=null;
+  ts.forEach(function(t){run=(prev!==null&&t-prev===864e5)?run+1:1;if(run>best)best=run;prev=t});
+  return {cur:cur,best:best};
+}
+function streakBar(){
+  var c=streakOf(chSet()),p=streakOf(prSet());
+  function bx(label,s){return h('div',{class:'streak'},[h('b',{text:s.cur+(s.cur===1?' day':' days')}),h('span',{text:label}),h('span',{text:'Best: '+s.best,style:'display:block'})])}
+  return h('div',{class:'streaks'},[bx('Challenge streak',c),bx('Prayer streak',p)]);
+}
 var back='quiet';
-function rulesLink(top){var row=h('div',{style:'display:flex;justify-content:center;gap:10px;margin-top:'+(top||0)+'px'});[['The Challenge','rules'],['Quiet Times','qt']].forEach(function(p){var b=h('button',{class:'rules-link',type:'button',text:p[0],style:'margin:0 0 16px'});b.onclick=function(){back=tab;tab=p[1];render()};row.appendChild(b)});return row}
+function rulesLink(top){var row=h('div',{style:'display:flex;justify-content:center;gap:10px;margin-top:'+(top||0)+'px'});[['The Challenge','rules'],['Quiet Times','qt']].forEach(function(p){var b=h('button',{class:'rules-link',type:'button',text:p[0],style:'margin:0 0 16px'});b.onclick=function(){back=tab;tab=p[1];render()};row.appendChild(b)});var w=h('div',{});w.appendChild(row);w.appendChild(streakBar());return w}
 function rules(){
   var box=document.createDocumentFragment();
   var bk=h('button',{class:'rules-link',type:'button',text:'‹ Back',style:'margin-left:0'});bk.onclick=function(){tab=back;render()};
@@ -145,7 +167,7 @@ function gospel(){
     var card=bookCard('g',g[0],list,done,next);
     list.filter(function(x){return x.b===g[0]}).forEach(function(x){
       var id='g'+x.n,cb=h('input',{type:'checkbox',id:id}),on=done.indexOf(x.n)>-1;cb.checked=on;
-      cb.onchange=function(){var a=(data.gdone||[]).filter(function(v){return v!==x.n});if(cb.checked)a.push(x.n);data.gdone=a;save();var y=window.scrollY;render();window.scrollTo(0,y)};
+      cb.onchange=function(){var a=(data.gdone||[]).filter(function(v){return v!==x.n});if(cb.checked)a.push(x.n);data.gdone=a;logAct('g',x.n,cb.checked);save();var y=window.scrollY;render();window.scrollTo(0,y)};
       var lk=readLink(x.b,x.c);lk.textContent='Read';
       card.appendChild(h('div',{class:'row'+(on?' done':'')},[cb,h('label',{for:id,text:'Day '+x.n+': '+x.b+' '+x.c}),lk]));
     });
@@ -186,7 +208,7 @@ function ntplan(){
     var card=bookCard('n',b[0],list,done,next);
     list.filter(function(x){return x.b===b[0]}).forEach(function(x){
       var id='n'+x.n,cb=h('input',{type:'checkbox',id:id}),on=done.indexOf(x.n)>-1;cb.checked=on;
-      cb.onchange=function(){var a=(data.ndone||[]).filter(function(v){return v!==x.n});if(cb.checked)a.push(x.n);data.ndone=a;save();var y=window.scrollY;render();window.scrollTo(0,y)};
+      cb.onchange=function(){var a=(data.ndone||[]).filter(function(v){return v!==x.n});if(cb.checked)a.push(x.n);data.ndone=a;logAct('n',x.n,cb.checked);save();var y=window.scrollY;render();window.scrollTo(0,y)};
       var lk=readLink(x.b,x.c);lk.textContent='Read';
       card.appendChild(h('div',{class:'row'+(on?' done':'')},[cb,h('label',{for:id,text:'Day '+x.n+': '+disp(x)}),lk]));
     });
@@ -218,7 +240,7 @@ function planPage(o){
     var card=bookCard(o.ip,b[0],list,done,next);
     list.filter(function(x){return x.b===b[0]}).forEach(function(x){
       var id=o.ip+x.n,cb=h('input',{type:'checkbox',id:id}),on=done.indexOf(x.n)>-1;cb.checked=on;
-      cb.onchange=function(){var a=(data[o.dk]||[]).filter(function(v){return v!==x.n});if(cb.checked)a.push(x.n);data[o.dk]=a;save();var y=window.scrollY;render();window.scrollTo(0,y)};
+      cb.onchange=function(){var a=(data[o.dk]||[]).filter(function(v){return v!==x.n});if(cb.checked)a.push(x.n);data[o.dk]=a;logAct(o.dk,x.n,cb.checked);save();var y=window.scrollY;render();window.scrollTo(0,y)};
       var lk=readLink(x.b,x.c);lk.textContent='Read';
       card.appendChild(h('div',{class:'row'+(on?' done':'')},[cb,h('label',{for:id,text:'Day '+x.n+': '+disp(x)}),lk]));
     });
@@ -258,6 +280,7 @@ function qtPage(){
 }
 function prayer(){
   var k=key(cur),dw=cur.getDay(),box=head(LABELS.prayer);
+  box.appendChild(streakBar());
   var list=data.people.filter(function(p){return p.days.indexOf(dw)>-1}),done=data.prayed[k]||[];
   var pc=h('div',{class:'card'},[h('h2',{text:'Pray for today ('+DAYS[dw]+')'})]);
   if(!list.length)pc.appendChild(h('p',{class:'empty',text:'No one is assigned to '+DAYS[dw]+' yet. Add people below.'}));
