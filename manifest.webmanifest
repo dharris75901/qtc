@@ -1,6 +1,6 @@
 {
- "name": "Prayer Journal",
- "short_name": "Prayer",
+ "name": "Quiet Time",
+ "short_name": "Quiet Time",
  "description": "Daily Bible reading challenges and a prayer list.",
  "start_url": ".",
  "display": "standalone",
