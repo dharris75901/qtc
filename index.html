@@ -1,0 +1,335 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prayer Journal</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20512%20512%22%3E%0A%3Cdefs%3E%0A%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%232f5d8a%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231b2a40%22/%3E%3C/linearGradient%3E%0A%3CradialGradient%20id%3D%22glow%22%20cx%3D%2250%25%22%20cy%3D%2234%25%22%20r%3D%2245%25%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23e0b45c%22%20stop-opacity%3D%22.35%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e0b45c%22%20stop-opacity%3D%220%22/%3E%3C/radialGradient%3E%0A%3C/defs%3E%0A%3Crect%20width%3D%22512%22%20height%3D%22512%22%20fill%3D%22url%28%23bg%29%22/%3E%0A%3Crect%20width%3D%22512%22%20height%3D%22512%22%20fill%3D%22url%28%23glow%29%22/%3E%0A%3C%21--%20cross%20--%3E%0A%3Cg%20fill%3D%22%23e0b45c%22%3E%3Crect%20x%3D%22237%22%20y%3D%2282%22%20width%3D%2238%22%20height%3D%22170%22%20rx%3D%226%22/%3E%3Crect%20x%3D%22190%22%20y%3D%22126%22%20width%3D%22132%22%20height%3D%2238%22%20rx%3D%226%22/%3E%3C/g%3E%0A%3C%21--%20open%20book%20--%3E%0A%3Cpath%20d%3D%22M256%20322%20C214%20292%20150%20288%2096%20304%20L96%20424%20C150%20408%20214%20412%20256%20440%20Z%22%20fill%3D%22%23f4efe2%22/%3E%0A%3Cpath%20d%3D%22M256%20322%20C298%20292%20362%20288%20416%20304%20L416%20424%20C362%20408%20298%20412%20256%20440%20Z%22%20fill%3D%22%23e6dfcc%22/%3E%0A%3Cpath%20d%3D%22M256%20322%20L256%20440%22%20stroke%3D%22%239a6f1c%22%20stroke-width%3D%225%22%20fill%3D%22none%22/%3E%0A%3Cg%20stroke%3D%22%232f5d8a%22%20stroke-opacity%3D%22.35%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%20fill%3D%22none%22%3E%0A%3Cpath%20d%3D%22M130%20336%20C165%20330%20205%20334%20232%20350%22/%3E%3Cpath%20d%3D%22M130%20364%20C165%20358%20205%20362%20232%20378%22/%3E%3Cpath%20d%3D%22M130%20392%20C165%20386%20205%20390%20232%20406%22/%3E%0A%3Cpath%20d%3D%22M382%20336%20C347%20330%20307%20334%20280%20350%22/%3E%3Cpath%20d%3D%22M382%20364%20C347%20358%20307%20362%20280%20378%22/%3E%3Cpath%20d%3D%22M382%20392%20C347%20386%20307%20390%20280%20406%22/%3E%0A%3C/g%3E%0A%3C/svg%3E%0A">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Prayer Journal">
+<meta name="theme-color" content="#1f2f45">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600&display=swap">
+<style>
+:root{--bg:#e9eef0;--card:#f8fafb;--ink:#1f2f45;--mute:#5d6b7d;--line:#cbd5db;--accent:#2f5d8a;--accent-ink:#fff;--gold:#9a6f1c;--ok:#3d7a5a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17212e;--card:#1f2d3e;--ink:#e6ecf2;--mute:#9aa9ba;--line:#33445a;--accent:#7fb0e0;--accent-ink:#10202f;--gold:#e0b45c;--ok:#7cc59d}}
+:root[data-theme="dark"]{--bg:#17212e;--card:#1f2d3e;--ink:#e6ecf2;--mute:#9aa9ba;--line:#33445a;--accent:#7fb0e0;--accent-ink:#10202f;--gold:#e0b45c;--ok:#7cc59d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Literata",Georgia,serif;padding-bottom:84px}
+main{max-width:560px;margin:0 auto;padding:20px 16px}
+h1{font-size:1.6rem;line-height:1.2;margin:0}
+h2{font-size:1.05rem;margin:0 0 8px;font-weight:600}
+.sub{color:var(--mute);font-size:.9rem;margin:2px 0 0}
+.ptitle{font-size:.85rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin:0 0 12px;text-align:center}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 18px}
+.nav button{font:inherit;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:1.2rem}
+.nav div{text-align:center;flex:1}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.read{border-left:4px solid var(--gold)}
+.read .ref{font-size:1.35rem;font-weight:600;margin:0}
+.row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line);min-height:48px}
+.row:first-of-type{border-top:0}
+.row input[type=checkbox]{width:22px;height:22px;accent-color:var(--ok);flex:none}
+.row label{flex:1}
+.row.done label{color:var(--mute);text-decoration:line-through}
+.row .x{font:inherit;background:none;border:0;color:var(--mute);font-size:1.3rem;width:44px;height:44px}
+textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px}
+textarea{min-height:120px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{font:inherit;font-size:.9rem;padding:8px 12px;min-height:40px;border-radius:20px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn{font:inherit;font-weight:600;padding:12px 18px;min-height:46px;border-radius:10px;border:0;background:var(--accent);color:var(--accent-ink);width:100%}
+.empty{color:var(--mute);margin:0}
+.rules-link{display:block;font:inherit;font-size:.9rem;color:var(--accent);background:none;border:1px solid var(--line);border-radius:20px;padding:8px 16px;min-height:44px;margin:0 auto 16px}
+.rules{padding-left:22px;margin:0 0 12px}.rules li{margin:0 0 8px}
+.card p{margin:0 0 10px}
+.book>summary{cursor:pointer;font-weight:600;font-size:1.05rem;min-height:44px;display:flex;align-items:center;list-style:none}
+.book>summary::-webkit-details-marker{display:none}
+.book>summary::after{content:'\25B8';margin-left:auto;color:var(--mute)}
+.book[open]>summary::after{content:'\25BE'}
+.book[open]>summary{margin-bottom:6px}
+.esv{display:inline-block;color:var(--accent);font-weight:600;min-height:44px;line-height:44px}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs button{flex:1;font:inherit;font-size:.7rem;line-height:1.2;padding:6px 2px;min-height:56px;background:none;border:0;color:var(--mute)}
+.tabs button[aria-current=true]{color:var(--accent);font-weight:600;box-shadow:inset 0 3px 0 var(--accent)}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.saved{color:var(--mute);font-size:.8rem;margin:6px 0 0;min-height:1.2em}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav class="tabs" id="tabs">
+<button data-t="quiet"></button><button data-t="gospel"></button><button data-t="nt"></button><button data-t="ot"></button><button data-t="prayer"></button>
+</nav>
+<script>
+var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var LABELS={quiet:'31 Day Proverbs Challenge',gospel:'3 Month Gospel Challenge',nt:'6 Month New Testament Challenge',ot:'1 Year Old Testament Challenge',prayer:'Prayer'};
+var TABS={quiet:'31 Day Proverbs',gospel:'3 Month Gospels',nt:'6 Month New Testament',ot:'1 Year Old Testament',prayer:'Prayer'};
+var GOS=[['Matthew',28],['Mark',16],['Luke',24],['John',21]];
+var mem=null;
+function load(){try{var r=localStorage.getItem('prayerjournal');if(r)return JSON.parse(r)}catch(e){}return mem||{people:[],notes:{},prayed:{}}}
+function save(){mem=data;try{localStorage.setItem('prayerjournal',JSON.stringify(data))}catch(e){}}
+var data=load(),tab='quiet',cur=new Date(),pick=[];
+cur.setHours(12,0,0,0);
+function key(d){return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+function doy(d){return Math.round((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(d.getFullYear(),0,0))/864e5)}
+function h(t,p,kids){var e=document.createElement(t);for(var k in(p||{})){if(k==='text')e.textContent=p[k];else if(k.slice(0,2)==='on')e[k]=p[k];else e.setAttribute(k,p[k])}(kids||[]).forEach(function(c){e.appendChild(c)});return e}
+function shift(n){cur.setDate(cur.getDate()+n);render()}
+var VERS=['ESV','NLT','NKJV','NIV','NASB'];
+function ver(){return VERS.indexOf(data.ver)>-1?data.ver:'ESV'}
+function readLink(b,c){b=b.replace(/ /g,'+');if(b==='Psalms')b='Psalm';var v=ver(),u=v==='ESV'?'https://www.esv.org/'+b+'+'+c+'/':'https://www.biblegateway.com/passage/?search='+b+'+'+c+'&version='+v;return h('a',{class:'esv',href:u,target:'_blank',rel:'noopener',text:'Read in the '+v})}
+function verBar(){var d=h('div',{class:'chips'});VERS.forEach(function(v){var b=h('button',{class:'chip',type:'button','aria-pressed':ver()===v?'true':'false',text:v});b.onclick=function(){data.ver=v;save();var y=window.scrollY;render();window.scrollTo(0,y)};d.appendChild(b)});return d}
+function head(title){
+  var dw=cur.getDay(),dn=doy(cur),yd=(cur.getFullYear()%4===0&&(cur.getFullYear()%100!==0||cur.getFullYear()%400===0))?366:365;
+  var box=document.createDocumentFragment();
+  if(title)box.appendChild(h('h2',{class:'ptitle',text:title}));
+  box.appendChild(h('div',{class:'nav'},[
+    h('button',{'aria-label':'Previous day',text:'\u2039',onclick:function(){shift(-1)}}),
+    h('div',{},[h('h1',{text:DAYS[dw]+', '+cur.toLocaleDateString(undefined,{month:'long',day:'numeric'})}),h('p',{class:'sub',text:'Day '+dn+' of '+yd})]),
+    h('button',{'aria-label':'Next day',text:'\u203a',onclick:function(){shift(1)}})]));
+  return box;
+}
+function quiet(){
+  var k=key(cur),box=head(LABELS.quiet);
+  box.appendChild(rulesLink());
+  box.appendChild(h('div',{class:'card read'},[h('h2',{text:'Today\u2019s reading'}),h('p',{class:'ref',text:'Proverbs '+cur.getDate()}),verBar(),readLink('Proverbs',cur.getDate())]));
+  var ta=h('textarea',{'aria-label':'Note for today',placeholder:'Write your note here...'});
+  ta.value=data.notes[k]||'';
+  var sv=h('p',{class:'saved'});
+  ta.oninput=function(){data.notes[k]=ta.value;save();sv.textContent='Saved'};
+  box.appendChild(h('div',{class:'card'},[h('h2',{text:'Note'}),h('p',{text:'What did God reveal about himself today?',style:'font-weight:600;margin:0 0 6px'}),h('p',{text:'What did God reveal about me today?',style:'font-weight:600;margin:0 0 10px'}),ta,sv]));
+  return box;
+}
+var back='quiet';
+function rulesLink(top){var row=h('div',{style:'display:flex;justify-content:center;gap:10px;margin-top:'+(top||0)+'px'});[['The Challenge','rules'],['Quiet Times','qt']].forEach(function(p){var b=h('button',{class:'rules-link',type:'button',text:p[0],style:'margin:0 0 16px'});b.onclick=function(){back=tab;tab=p[1];render()};row.appendChild(b)});return row}
+function rules(){
+  var box=document.createDocumentFragment();
+  var bk=h('button',{class:'rules-link',type:'button',text:'‹ Back',style:'margin-left:0'});bk.onclick=function(){tab=back;render()};
+  box.appendChild(bk);
+  box.appendChild(h('h2',{class:'ptitle',text:'The Challenge'}));
+  box.appendChild(h('div',{class:'card read'},[h('h2',{text:'Take the Challenge'}),
+    h('p',{text:'Choose where to start: the 31 Day Proverbs Challenge, the 3 Month Gospel Challenge, the 6 Month New Testament Challenge, or the 1 Year Old Testament Challenge.'}),
+    h('p',{text:'Each day:'}),
+    h('ol',{class:'rules'},[h('li',{text:'Read the day’s passage.'}),h('li',{text:'Write a simple journal note.'}),h('li',{text:'Pray for someone other than yourself.'})])]));
+  box.appendChild(h('div',{class:'card'},[h('h2',{text:'Your prayer list'}),
+    h('p',{text:'On the Prayer page, add the names of the people you want to pray for. Choose one or more days of the week for each person, so you pray for them regularly.'})]));
+  box.appendChild(h('div',{class:'card'},[h('h2',{text:'Choose your Bible version'}),
+    h('p',{text:'Read in the ESV, NLT, NKJV, NIV, or NASB. You can switch at any time on any reading page.'})]));
+  var em=h('a',{class:'esv',href:'mailto:qtbiblechallenge@gmail.com?subject=My%20Challenge%20Experience',text:'qtbiblechallenge@gmail.com'});
+  var p=h('p',{});p.appendChild(document.createTextNode('When you finish a challenge, tell us about your experience. Email us and let us know how it went: '));p.appendChild(em);
+  box.appendChild(h('div',{class:'card'},[h('h2',{text:'Share your experience'}),p]));
+  box.appendChild(h('div',{class:'card'},[h('h2',{text:'Other challenges'}),h('p',{text:'One way to fill a full year without the Old Testament is to start with the 31 Day Proverbs Challenge, then the 3 Month Gospel Challenge, then the 31 Day Proverbs Challenge again, then the 6 Month New Testament Challenge, and finish with the 31 Day Proverbs Challenge once more. You will read Proverbs three times (you can switch Bible versions each time) and the Gospels twice.'})]));
+  return box;
+}
+function gospel(){
+  var box=document.createDocumentFragment(),list=[],n=0;
+  GOS.forEach(function(g){for(var c=1;c<=g[1];c++){n++;list.push({n:n,b:g[0],c:c})}});
+  var done=data.gdone||[],next=list.filter(function(x){return done.indexOf(x.n)<0})[0];
+  box.appendChild(h('h2',{class:'ptitle',text:LABELS.gospel}));
+  box.appendChild(h('p',{class:'sub',text:'One chapter a day: Matthew, Mark, Luke, then John. '+done.length+' of 89 days complete.'}));
+  box.appendChild(rulesLink(12));
+  var up=h('div',{class:'card read',style:'margin-top:16px'},[h('h2',{text:'Up next'})]);
+  if(next){up.appendChild(h('p',{class:'ref',text:'Day '+next.n+': '+next.b+' '+next.c}));up.appendChild(verBar());up.appendChild(readLink(next.b,next.c))}
+  else up.appendChild(h('p',{class:'ref',text:'Challenge complete!'}));
+  box.appendChild(up);
+  if(next){
+    var gk='gospel-'+next.n,gta=h('textarea',{'aria-label':'Note for day '+next.n,placeholder:'Write your note here...'});
+    gta.value=data.notes[gk]||'';
+    var gsv=h('p',{class:'saved'});
+    gta.oninput=function(){data.notes[gk]=gta.value;save();gsv.textContent='Saved'};
+    box.appendChild(h('div',{class:'card'},[h('h2',{text:'Note for Day '+next.n}),h('p',{text:'What did God reveal about himself today?',style:'font-weight:600;margin:0 0 6px'}),h('p',{text:'What did God reveal about me today?',style:'font-weight:600;margin:0 0 10px'}),gta,gsv]));
+  }
+  GOS.forEach(function(g){
+    var card=bookCard('g',g[0],list,done,next);
+    list.filter(function(x){return x.b===g[0]}).forEach(function(x){
+      var id='g'+x.n,cb=h('input',{type:'checkbox',id:id}),on=done.indexOf(x.n)>-1;cb.checked=on;
+      cb.onchange=function(){var a=(data.gdone||[]).filter(function(v){return v!==x.n});if(cb.checked)a.push(x.n);data.gdone=a;save();var y=window.scrollY;render();window.scrollTo(0,y)};
+      var lk=readLink(x.b,x.c);lk.textContent='Read';
+      card.appendChild(h('div',{class:'row'+(on?' done':'')},[cb,h('label',{for:id,text:'Day '+x.n+': '+x.b+' '+x.c}),lk]));
+    });
+    box.appendChild(card);
+  });
+  return box;
+}
+var NT=[['Matthew',28,1],['Mark',16,1],['Luke',24,1],['John',21,1],['Acts',28,2],['Romans',16,2],['1 Corinthians',16,2],['2 Corinthians',13,2],['Galatians',6,2],['Ephesians',6,2],['Philippians',4,2],['Colossians',4,2],['1 Thessalonians',5,2],['2 Thessalonians',3,2],['1 Timothy',6,2],['2 Timothy',4,2],['Titus',3,2],['Philemon',1,2],['Hebrews',13,2],['James',5,2],['1 Peter',5,2],['2 Peter',3,2],['1 John',5,2],['2 John',1,2],['3 John',1,2],['Jude',1,2],['Revelation',22,2]];
+var openB={};
+function bookCard(p,name,list,done,next){
+  var mine=list.filter(function(x){return x.b===name}),cnt=mine.filter(function(x){return done.indexOf(x.n)>-1}).length,k=p+name;
+  var d=h('details',{class:'card book'},[h('summary',{text:name+'  ·  '+cnt+' of '+mine.length})]);
+  var o=openB[k]!==undefined?openB[k]:!!(next&&next.b===name);
+  if(o)d.setAttribute('open','');
+  d.addEventListener('toggle',function(){openB[k]=d.open});
+  return d;
+}
+function ntplan(){
+  var box=document.createDocumentFragment(),list=[],n=0;
+  NT.forEach(function(b){for(var c=1;c<=b[1];c+=b[2]){var e=Math.min(c+b[2]-1,b[1]);n++;list.push({n:n,b:b[0],c:c===e?String(c):c+'-'+e})}});
+  var done=data.ndone||[],total=list.length,next=list.filter(function(x){return done.indexOf(x.n)<0})[0];
+  function disp(x){return x.b+' '+x.c.replace('-','–')}
+  box.appendChild(h('h2',{class:'ptitle',text:LABELS.nt}));
+  box.appendChild(h('p',{class:'sub',text:'The Gospels one chapter a day, then Acts, the letters and Revelation two chapters a day. '+done.length+' of '+total+' days complete.'}));
+  box.appendChild(rulesLink(12));
+  var up=h('div',{class:'card read',style:'margin-top:16px'},[h('h2',{text:'Up next'})]);
+  if(next){up.appendChild(h('p',{class:'ref',text:'Day '+next.n+': '+disp(next)}));up.appendChild(verBar());up.appendChild(readLink(next.b,next.c))}
+  else up.appendChild(h('p',{class:'ref',text:'Challenge complete!'}));
+  box.appendChild(up);
+  if(next){
+    var nk='nt-'+next.n,nta=h('textarea',{'aria-label':'Note for day '+next.n,placeholder:'Write your note here...'});
+    nta.value=data.notes[nk]||'';
+    var nsv=h('p',{class:'saved'});
+    nta.oninput=function(){data.notes[nk]=nta.value;save();nsv.textContent='Saved'};
+    box.appendChild(h('div',{class:'card'},[h('h2',{text:'Note for Day '+next.n}),h('p',{text:'What did God reveal about himself today?',style:'font-weight:600;margin:0 0 6px'}),h('p',{text:'What did God reveal about me today?',style:'font-weight:600;margin:0 0 10px'}),nta,nsv]));
+  }
+  NT.forEach(function(b){
+    var card=bookCard('n',b[0],list,done,next);
+    list.filter(function(x){return x.b===b[0]}).forEach(function(x){
+      var id='n'+x.n,cb=h('input',{type:'checkbox',id:id}),on=done.indexOf(x.n)>-1;cb.checked=on;
+      cb.onchange=function(){var a=(data.ndone||[]).filter(function(v){return v!==x.n});if(cb.checked)a.push(x.n);data.ndone=a;save();var y=window.scrollY;render();window.scrollTo(0,y)};
+      var lk=readLink(x.b,x.c);lk.textContent='Read';
+      card.appendChild(h('div',{class:'row'+(on?' done':'')},[cb,h('label',{for:id,text:'Day '+x.n+': '+disp(x)}),lk]));
+    });
+    box.appendChild(card);
+  });
+  return box;
+}
+var OT=[['Genesis',50,3],['Exodus',40,3],['Leviticus',27,3],['Numbers',36,3],['Deuteronomy',34,3],['Joshua',24,3],['Judges',21,3],['Ruth',4,3],['1 Samuel',31,3],['2 Samuel',24,3],['1 Kings',22,3],['2 Kings',25,3],['1 Chronicles',29,3],['2 Chronicles',36,3],['Ezra',10,3],['Nehemiah',13,3],['Esther',10,3],['Job',42,2],['Psalms',150,2],['Proverbs',31,2],['Ecclesiastes',12,2],['Song of Solomon',8,2],['Isaiah',66,3],['Jeremiah',52,3],['Lamentations',5,2],['Ezekiel',48,3],['Daniel',12,2],['Hosea',14,3],['Joel',3,3],['Amos',9,3],['Obadiah',1,3],['Jonah',4,3],['Micah',7,3],['Nahum',3,3],['Habakkuk',3,3],['Zephaniah',3,3],['Haggai',2,3],['Zechariah',14,3],['Malachi',4,3]];
+function planPage(o){
+  var box=document.createDocumentFragment(),list=[],n=0;
+  o.books.forEach(function(b){for(var c=1;c<=b[1];c+=b[2]){var e=Math.min(c+b[2]-1,b[1]);n++;list.push({n:n,b:b[0],c:c===e?String(c):c+'-'+e})}});
+  var done=data[o.dk]||[],total=list.length,next=list.filter(function(x){return done.indexOf(x.n)<0})[0];
+  function disp(x){return x.b+' '+x.c.replace('-','–')}
+  box.appendChild(h('h2',{class:'ptitle',text:o.t}));
+  box.appendChild(h('p',{class:'sub',text:o.sub+' '+done.length+' of '+total+' days complete.'}));
+  box.appendChild(rulesLink(12));
+  var up=h('div',{class:'card read',style:'margin-top:16px'},[h('h2',{text:'Up next'})]);
+  if(next){up.appendChild(h('p',{class:'ref',text:'Day '+next.n+': '+disp(next)}));up.appendChild(verBar());up.appendChild(readLink(next.b,next.c))}
+  else up.appendChild(h('p',{class:'ref',text:'Challenge complete!'}));
+  box.appendChild(up);
+  if(next){
+    var nk=o.nk+next.n,nta=h('textarea',{'aria-label':'Note for day '+next.n,placeholder:'Write your note here...'});
+    nta.value=data.notes[nk]||'';
+    var nsv=h('p',{class:'saved'});
+    nta.oninput=function(){data.notes[nk]=nta.value;save();nsv.textContent='Saved'};
+    box.appendChild(h('div',{class:'card'},[h('h2',{text:'Note for Day '+next.n}),h('p',{text:'What did God reveal about himself today?',style:'font-weight:600;margin:0 0 6px'}),h('p',{text:'What did God reveal about me today?',style:'font-weight:600;margin:0 0 10px'}),nta,nsv]));
+  }
+  o.books.forEach(function(b){
+    var card=bookCard(o.ip,b[0],list,done,next);
+    list.filter(function(x){return x.b===b[0]}).forEach(function(x){
+      var id=o.ip+x.n,cb=h('input',{type:'checkbox',id:id}),on=done.indexOf(x.n)>-1;cb.checked=on;
+      cb.onchange=function(){var a=(data[o.dk]||[]).filter(function(v){return v!==x.n});if(cb.checked)a.push(x.n);data[o.dk]=a;save();var y=window.scrollY;render();window.scrollTo(0,y)};
+      var lk=readLink(x.b,x.c);lk.textContent='Read';
+      card.appendChild(h('div',{class:'row'+(on?' done':'')},[cb,h('label',{for:id,text:'Day '+x.n+': '+disp(x)}),lk]));
+    });
+    box.appendChild(card);
+  });
+  return box;
+}
+function otplan(){return planPage({t:LABELS.ot,books:OT,dk:'odone',nk:'ot-',ip:'o',sub:'Three chapters a day, and two a day for Job, Psalms, Proverbs, Ecclesiastes, Song of Solomon, Lamentations and Daniel.'})}
+var QT_STORY=[`Early every morning, before everyone gets up, when no one is stirring, not even a mouse, I wake up and get out of bed. I make my coffee, feed my dogs, and make my way to the place. The place is a small office in the backyard with a comfortable chair, a small table, and pictures of my kids and family on the wall. I take my phone, which is set to “do not disturb,” and my email is set to “out of office.” I use an app on my phone to help guide me and journal my time with Jesus as I read the Bible and spend time alone with God. I have learned that if I don't take these precautions, the phone will ring, the text will come, or the email will notify. All at exactly the wrong time, and none of it important. I do this routine every morning on purpose, because I have a mission and I have a plan to fulfill that mission. The mission is to become a better Christian man. The plan is to spend time with the One who created me and knows exactly how to make me a better Christian man.`,
+`Today, I am reading Proverbs chapter 3. Having just turned 61 and recently suffered a major heart attack, I reflect on verses 1 and 2: “My son, do not forget my teaching, but let your heart keep my commandments, for length of days and years of life and peace they will add to you.” What a timely message for me, coming off major heart surgery and a traumatic event in which I passed away three times on the way to the hospital. At 60 years of age. A not-so-old man. Reading this, I think to myself, “Did God just write this yesterday so that it would apply to me today? Why am I just happening to read this today? Isn't it amazing how God's Word jumps out of time and space into the reality of our lives today?” I jot these things down in my journal. I look up at the wall, see a picture of my son, and it prompts me to pray: “Lord Jesus, may You be glorified in Stephen's life. May he understand the importance of remembering Your teaching and Your words, so that peace will be added to his life. Thank You, Jesus, for making a way for us to build forever families. I get to be Your son and see You face to face one day. I get to see my dad again, I get to see my son when we both get to heaven, and I get to see great-grandsons I may never have seen on this earth and in this life. That is what gives me peace. Amen.” I take a couple more sips of coffee, go back to the house, and begin my day in peace and tranquility.`,
+`As I hop in the truck and head down the road to work, I reminisce about life. How did I form this habit of getting up so early in the morning and reading the Bible? Who taught me to do this? Was it my youth minister? My pastor? The first person who taught me this was my dad. He didn't sit me down and tell me exactly how to do it. He just did it. I can't remember a time I ever got up before him. Even when I was going fishing or hunting, he was always up first. I remember that every time I walked out of my room and into the living room, no matter how early, he would be setting his Bible down on the table with his notebook and pen. Later in life, my youth minister taught me more about how to have a plan and how to approach this time alone with God. But the discipline, the time, the example — that was modeled for me, and I saw it in my father's life.`];
+var QT_INTRO=`I've developed this application to help others have a plan to succeed in their mission to become a better Christian man or a better Christian woman. I hope it helps you develop and grow. I hope it doesn't become a crutch, but just a tool to get you started on a lifelong journey with Jesus. Here are some key things about the Quiet Time Challenge:`;
+var QT_KEYS=[`Find a place that is free from accidental and purposeful distractions. Make sure your phone, TV, kids, computer, etc., can't interrupt you.`,`Get up early. Make it the first thing you do in the morning.`,`Make it a holy, solemn commitment. Will it.`,`Make sure your spouse and kids know: This is my time with God. You don't interrupt me, and I won't interrupt you. I help you guard your time, and you help me guard my time.`,`Don't make it a lengthy Bible study. It's a focused, short time. It's about daily discipline and commitment.`,`Don't make it about you. Make it about Him. Don't read to call attention to what you need to do about yourself and all your sin. Read to figure out who He is. How mighty is He? How gracious is He? How loving is He? How holy is He? How precious is He? How just is He?`];
+function infoCard(k,title,kids){
+  var d=h('details',{class:'card book'},[h('summary',{text:title})]);
+  if(openB[k]!==false)d.setAttribute('open','');
+  d.addEventListener('toggle',function(){openB[k]=d.open});
+  kids.forEach(function(c){d.appendChild(c)});
+  return d;
+}
+function qtPage(){
+  var box=document.createDocumentFragment();
+  var bk=h('button',{class:'rules-link',type:'button',text:'‹ Back',style:'margin-left:0'});bk.onclick=function(){tab=back;render()};
+  box.appendChild(bk);
+  box.appendChild(h('h2',{class:'ptitle',text:'Quiet Times'}));
+  box.appendChild(infoCard('qt-story','My Quiet Time',QT_STORY.map(function(t){return h('p',{text:t})})));
+  box.appendChild(infoCard('qt-keys','The Quiet Time Challenge',[h('p',{text:QT_INTRO}),h('ol',{class:'rules'},QT_KEYS.map(function(t){return h('li',{text:t})}))]));
+  var ta=h('textarea',{'aria-label':'New quiet time entry',placeholder:'Write about your quiet time...'});
+  var err=h('p',{class:'saved'});
+  var add=h('button',{class:'btn',type:'button',text:'Save entry'});
+  add.onclick=function(){
+    var t=ta.value.trim();
+    if(!t){err.textContent='Write something first.';return}
+    data.qt=data.qt||[];data.qt.unshift({id:Date.now(),ts:Date.now(),text:t});
+    save();render();
+  };
+  box.appendChild(h('div',{class:'card'},[h('h2',{text:'New entry'}),ta,h('div',{style:'height:10px'}),add,err]));
+  var list=data.qt||[];
+  if(!list.length)box.appendChild(h('p',{class:'empty',text:'No entries yet. Your saved quiet times will appear here.'}));
+  list.forEach(function(e){
+    var when=new Date(e.ts).toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+    var del=h('button',{class:'rules-link',type:'button',text:'Delete',style:'margin:8px 0 0;min-height:40px;font-size:.8rem'});
+    var armed=false;
+    del.onclick=function(){if(!armed){armed=true;del.textContent='Tap again to delete';return}data.qt=data.qt.filter(function(q){return q.id!==e.id});save();render()};
+    box.appendChild(h('div',{class:'card'},[h('h2',{text:when}),h('p',{text:e.text,style:'white-space:pre-wrap;margin:0'}),del]));
+  });
+  return box;
+}
+function prayer(){
+  var k=key(cur),dw=cur.getDay(),box=head(LABELS.prayer);
+  var list=data.people.filter(function(p){return p.days.indexOf(dw)>-1}),done=data.prayed[k]||[];
+  var pc=h('div',{class:'card'},[h('h2',{text:'Pray for today ('+DAYS[dw]+')'})]);
+  if(!list.length)pc.appendChild(h('p',{class:'empty',text:'No one is assigned to '+DAYS[dw]+' yet. Add people below.'}));
+  list.forEach(function(p){
+    var on=done.indexOf(p.id)>-1,id='c'+p.id;
+    var cb=h('input',{type:'checkbox',id:id});cb.checked=on;
+    cb.onchange=function(){var a=data.prayed[k]||[];a=a.filter(function(x){return x!==p.id});if(cb.checked)a.push(p.id);data.prayed[k]=a;save();row.className='row'+(cb.checked?' done':'')};
+    var row=h('div',{class:'row'+(on?' done':'')},[cb,h('label',{for:id,text:p.name})]);pc.appendChild(row);
+  });
+  box.appendChild(pc);
+  box.appendChild(people());
+  return box;
+}
+function people(){
+  var box=document.createDocumentFragment();
+  box.appendChild(h('h2',{text:'Add people',style:'margin-top:28px'}));
+  box.appendChild(h('p',{class:'sub',text:'Add a name and choose the days you want to pray for them.'}));
+  var name=h('input',{type:'text','aria-label':'Name',placeholder:'Name',autocomplete:'off'});
+  var chips=h('div',{class:'chips'});
+  DAYS.forEach(function(d,i){
+    var b=h('button',{class:'chip',type:'button','aria-pressed':pick.indexOf(i)>-1?'true':'false',text:d.slice(0,3),'aria-label':d});
+    b.onclick=function(){var j=pick.indexOf(i);if(j>-1)pick.splice(j,1);else pick.push(i);b.setAttribute('aria-pressed',j>-1?'false':'true')};
+    chips.appendChild(b);
+  });
+  var err=h('p',{class:'saved'});
+  var add=h('button',{class:'btn',type:'button',text:'Add person'});
+  add.onclick=function(){
+    var n=name.value.trim();
+    if(!n){err.textContent='Enter a name.';return}
+    if(!pick.length){err.textContent='Choose at least one day.';return}
+    data.people.push({id:Date.now()+Math.floor(Math.random()*1000),name:n,days:pick.slice().sort()});
+    pick=[];save();render();
+  };
+  box.appendChild(h('div',{class:'card',style:'margin-top:16px'},[name,chips,add,err]));
+  DAYS.forEach(function(d,i){
+    var l=data.people.filter(function(p){return p.days.indexOf(i)>-1});
+    if(!l.length)return;
+    var c=h('div',{class:'card'},[h('h2',{text:d})]);
+    l.forEach(function(p){
+      var x=h('button',{class:'x','aria-label':'Remove '+p.name+' from '+d,text:'\u00d7'});
+      x.onclick=function(){p.days=p.days.filter(function(v){return v!==i});if(!p.days.length)data.people=data.people.filter(function(q){return q!==p});save();render()};
+      c.appendChild(h('div',{class:'row'},[h('span',{style:'flex:1',text:p.name}),x]));
+    });
+    box.appendChild(c);
+  });
+  return box;
+}
+function render(){
+  var a=document.getElementById('app');a.textContent='';
+  a.appendChild(tab==='quiet'?quiet():tab==='gospel'?gospel():tab==='nt'?ntplan():tab==='ot'?otplan():tab==='qt'?qtPage():tab==='rules'?rules():prayer());
+  Array.prototype.forEach.call(document.querySelectorAll('#tabs button'),function(b){
+    if(b.dataset.t===tab)b.setAttribute('aria-current','true');else b.removeAttribute('aria-current');
+    b.textContent=TABS[b.dataset.t];
+  });
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('#tabs button').forEach(function(b){b.onclick=function(){tab=b.dataset.t;render()}});
+render();
+</script>
+</body>
+</html>
+
+</body></html>
