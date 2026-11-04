@@ -247,16 +247,6 @@ function qtPage(){
   box.appendChild(h('h2',{class:'ptitle',text:'Quiet Times'}));
   box.appendChild(infoCard('qt-story','My Quiet Time',QT_STORY.map(function(t){return h('p',{text:t})})));
   box.appendChild(infoCard('qt-keys','The Quiet Time Challenge',[h('p',{text:QT_INTRO}),h('ol',{class:'rules'},QT_KEYS.map(function(t){return h('li',{text:t})}))]));
-  var ta=h('textarea',{'aria-label':'New quiet time entry',placeholder:'Write about your quiet time...'});
-  var err=h('p',{class:'saved'});
-  var add=h('button',{class:'btn',type:'button',text:'Save entry'});
-  add.onclick=function(){
-    var t=ta.value.trim();
-    if(!t){err.textContent='Write something first.';return}
-    data.qt=data.qt||[];data.qt.unshift({id:Date.now(),ts:Date.now(),text:t});
-    save();render();
-  };
-  box.appendChild(h('div',{class:'card'},[h('h2',{text:'New entry'}),ta,h('div',{style:'height:10px'}),add,err]));
   var list=data.qt||[];
   if(!list.length)box.appendChild(h('p',{class:'empty',text:'No entries yet. Your saved quiet times will appear here.'}));
   list.forEach(function(e){
