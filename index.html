@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -136,7 +135,7 @@ function streakBar(){
   function bx(label,s){return h('div',{class:'streak'},[h('b',{text:s.cur+(s.cur===1?' day':' days')}),h('span',{text:label}),h('span',{text:'Best: '+s.best,style:'display:block'})])}
   return h('div',{class:'streaks'},[bx('Challenge streak',c),bx('Prayer streak',p)]);
 }
-var MORE=[['home','Home'],['plans','Challenges'],['qt','Quiet Time'],['results','Results'],['export','Export']];
+var MORE=[['home','Home'],['plans','Challenges'],['qt','Quiet Time'],['music','Music'],['results','Results'],['export','Export']];
 function moreBtn(){return document.querySelector('#tabs [data-t="more"]')}
 function closeMenu(){document.getElementById('moremenu').hidden=true;moreBtn().setAttribute('aria-expanded','false')}
 function toggleMenu(){
@@ -231,6 +230,43 @@ function homePage(){
     b.onclick=function(){tab=c[0];render()};
     box.appendChild(b);
   });
+  return box;
+}
+var SONGS=[['What a Beautiful Name','Hillsong','Hillsong'],
+ ['Seek Ye First','Maranatha! Music','Maranatha Music'],
+ ['Oceans (Where Feet May Fail)','Hillsong','Hillsong'],
+ ['As the Deer','Maranatha! Music','Maranatha Music'],
+ ['Mighty to Save','Hillsong','Hillsong'],
+ ['Father I Adore You','Maranatha! Music','Maranatha Music'],
+ ['Shout to the Lord','Hillsong','Hillsong'],
+ ['Lord, I Lift Your Name on High','Maranatha! Music','Maranatha Music'],
+ ['Cornerstone','Hillsong','Hillsong'],
+ ['In His Time','Maranatha! Music','Maranatha Music'],
+ ['Who You Say I Am','Hillsong','Hillsong'],
+ ['I Love You Lord','Maranatha! Music','Maranatha Music'],
+ ['King of Kings','Hillsong','Hillsong'],
+ ['Lord Be Glorified','Maranatha! Music','Maranatha Music'],
+ ['Christ Is Enough','Hillsong','Hillsong'],
+ ['Sing Hallelujah','Maranatha! Music','Maranatha Music'],
+ ['So Will I (100 Billion X)','Hillsong','Hillsong'],
+ ['Spirit Song','Maranatha! Music','Maranatha Music'],
+ ['Forever Reign','Hillsong','Hillsong'],
+ ['I Want to Praise You Lord','Maranatha! Music','Maranatha Music'],
+ ['This I Believe (The Creed)','Hillsong','Hillsong'],
+ ['The Sweetest Name of All','Maranatha! Music','Maranatha Music'],
+ ['Still','Hillsong','Hillsong'],
+ ['We Have Come Into His House','Maranatha! Music','Maranatha Music'],
+ ['Hosanna','Hillsong','Hillsong'],
+ ['Open Our Eyes','Maranatha! Music','Maranatha Music'],
+ ['Another Hallelujah','Hillsong','Hillsong'],
+ ['The Potter\u2019s Hand','Hillsong','Hillsong'],
+ ['Desert Song','Hillsong','Hillsong'],
+ ['Lead Me to the Cross','Hillsong','Hillsong'],
+ ['From the Inside Out','Hillsong','Hillsong']];
+function musicPage(){
+  var box=head('Music'),sg=SONGS[(cur.getDate()-1)%SONGS.length];
+  var url='https://www.youtube.com/results?search_query='+encodeURIComponent(sg[2]+' '+sg[0]);
+  box.appendChild(h('div',{class:'card read'},[h('h2',{text:'Song of the day'}),h('p',{class:'ref',text:sg[0]}),h('p',{class:'sub',style:'margin:2px 0 6px',text:sg[1]}),h('a',{class:'esv',href:url,target:'_blank',rel:'noopener',text:'Listen on YouTube'})]));
   return box;
 }
 function resultsPage(){
@@ -444,8 +480,8 @@ function people(){
 }
 function render(){
   var a=document.getElementById('app');a.textContent='';
-  a.appendChild(tab==='home'?homePage():tab==='quiet'?quiet():tab==='gospel'?gospel():tab==='nt'?ntplan():tab==='ot'?otplan():tab==='qt'?qtPage():tab==='plans'?plansPage():tab==='results'?resultsPage():tab==='export'?exportPage():prayer());
-  var hl=(tab==='plans'||tab==='qt'||tab==='results'||tab==='export')?'more':tab;
+  a.appendChild(tab==='home'?homePage():tab==='quiet'?quiet():tab==='gospel'?gospel():tab==='nt'?ntplan():tab==='ot'?otplan():tab==='qt'?qtPage():tab==='plans'?plansPage():tab==='results'?resultsPage():tab==='music'?musicPage():tab==='export'?exportPage():prayer());
+  var hl=(tab==='plans'||tab==='qt'||tab==='results'||tab==='export'||tab==='music')?'more':tab;
   Array.prototype.forEach.call(document.querySelectorAll('#tabs button'),function(b){
     if(b.dataset.t===hl)b.setAttribute('aria-current','true');else b.removeAttribute('aria-current');
     b.textContent=TABS[b.dataset.t];
@@ -457,5 +493,3 @@ render();
 </script>
 </body>
 </html>
-
-</body></html>
