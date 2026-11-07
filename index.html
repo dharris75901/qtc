@@ -265,8 +265,8 @@ var SONGS=[['What a Beautiful Name','Hillsong','Hillsong'],
  ['From the Inside Out','Hillsong','Hillsong']];
 function musicPage(){
   var box=head('Music'),sg=SONGS[(cur.getDate()-1)%SONGS.length];
-  var url='https://www.youtube.com/results?search_query='+encodeURIComponent(sg[2]+' '+sg[0]);
-  box.appendChild(h('div',{class:'card read'},[h('h2',{text:'Song of the day'}),h('p',{class:'ref',text:sg[0]}),h('p',{class:'sub',style:'margin:2px 0 6px',text:sg[1]}),h('a',{class:'esv',href:url,target:'_blank',rel:'noopener',text:'Listen on YouTube'})]));
+  var url='https://open.spotify.com/playlist/5k76DYj84tgdqNR2ALwI7n';
+  box.appendChild(h('div',{class:'card read'},[h('h2',{text:'Song of the day'}),h('p',{class:'ref',text:sg[0]}),h('p',{class:'sub',style:'margin:2px 0 6px',text:sg[1]}),h('a',{class:'esv',href:url,target:'_blank',rel:'noopener',text:'Open my Spotify playlist'})]));
   return box;
 }
 function resultsPage(){
