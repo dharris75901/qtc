@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F3F8FD" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1A26" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Prayer Book">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Prayer Book</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Source+Sans+3:wght@400;500;600&display=swap">
+<style>
+/* Layout: a pocket breviary — one column of text, rubrics in red, tabs at the thumb */
+:root{
+  --paper:#F3F8FD; --leaf:#E2EEF9; --ink:#1B2B3C; --muted:#5A6D82; --rule:#C8DAEC;
+  --rubric:#2C6AA6; --gilt:#8F6B22;
+  --serif:"EB Garamond",Garamond,"Times New Roman",serif;
+  --sans:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --scale:1;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0F1A26; --leaf:#192838; --ink:#E5EEF7; --muted:#9AB0C6; --rule:#2A3D52;
+  --rubric:#86BDEE; --gilt:#D6B46C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0F1A26; --leaf:#192838; --ink:#E5EEF7; --muted:#9AB0C6; --rule:#2A3D52;
+  --rubric:#86BDEE; --gilt:#D6B46C; color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--paper)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:var(--rubric)}
+:focus-visible{outline:2px solid var(--rubric);outline-offset:2px;border-radius:4px}
+
+.wrap{max-width:640px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 120px}
+header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--rule);margin-bottom:18px}
+.brand{font-family:var(--serif);font-size:30px;font-weight:500;letter-spacing:.01em;line-height:1}
+.brand small{display:block;font-family:var(--sans);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--rubric);margin-bottom:6px}
+.sizer{display:flex;gap:4px}
+.sizer button{width:38px;height:38px;border:1px solid var(--rule);border-radius:8px;font-family:var(--serif);font-size:17px}
+.sizer button:last-child{font-size:22px}
+
+h2.sec{font-family:var(--serif);font-weight:500;font-size:24px;margin:0 0 4px;text-wrap:balance}
+p.lede{margin:0 0 16px;color:var(--muted);line-height:1.5}
+.label{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:22px 0 8px;font-weight:600}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{padding:7px 13px;border:1px solid var(--rule);border-radius:999px;font-size:14px;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+.list{display:flex;flex-direction:column;border-top:1px solid var(--rule)}
+.item{display:flex;align-items:center;gap:12px;padding:14px 2px;border-bottom:1px solid var(--rule);text-align:left;width:100%}
+.item .num{font-family:var(--serif);color:var(--rubric);font-size:22px;min-width:40px;font-variant-numeric:tabular-nums}
+.item .body{flex:1;min-width:0}
+.item .t{font-family:var(--serif);font-size:20px;line-height:1.2}
+.item .s{font-size:13.5px;color:var(--muted);margin-top:3px}
+.item .star{color:var(--gilt);font-size:18px}
+.item .chev{color:var(--muted)}
+
+.today{background:var(--leaf);border-radius:12px;padding:14px 14px 12px;margin-bottom:6px}
+.today .row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;background:var(--paper);border:1px solid var(--rule);font-family:var(--serif);font-size:18px;text-decoration:none;color:var(--ink)}
+.pill.ext::after{content:"↗";font-family:var(--sans);font-size:12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px}
+.grid a,.grid button{display:flex;align-items:center;justify-content:center;height:40px;border-radius:6px;font-size:14px;font-variant-numeric:tabular-nums;text-decoration:none;color:var(--muted);border:1px solid var(--rule)}
+.grid button{color:var(--paper);background:var(--rubric);border-color:var(--rubric);font-weight:600}
+
+.namebox{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.namebox label{font-size:13px;color:var(--muted)}
+.namebox input{font:inherit;font-size:17px;padding:11px 12px;border-radius:8px;border:1px solid var(--rule);background:var(--paper);color:var(--ink)}
+
+.ourfather{font-family:var(--serif);font-size:calc(21px*var(--scale));line-height:1.6;background:var(--leaf);border-radius:12px;padding:18px}
+.ourfather .ref{font-family:var(--sans);font-size:13px;color:var(--muted);margin-top:10px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn{padding:12px 18px;border-radius:10px;font-weight:600;font-size:15px;border:1px solid var(--rule)}
+.btn.primary{background:var(--rubric);color:var(--paper);border-color:var(--rubric)}
+
+/* Tab bar */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper);border-top:1px solid var(--rule);
+  padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+nav.tabs .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 9px;text-decoration:none;color:var(--muted);font-size:12px;font-weight:500}
+nav.tabs a .g{font-family:var(--serif);font-size:21px;line-height:1}
+nav.tabs a[aria-current="page"]{color:var(--rubric)}
+
+/* Reader */
+.reader{position:fixed;inset:0;z-index:40;background:var(--paper);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.rbar{position:sticky;top:0;z-index:2;background:var(--paper);border-bottom:1px solid var(--rule);
+  padding-top:env(safe-area-inset-top,0px);}
+.rbar .in{max-width:640px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:8px max(10px,env(safe-area-inset-right,0px)) 8px max(10px,env(safe-area-inset-left,0px))}
+.rbar button{padding:8px 10px;border-radius:8px;font-size:15px;font-weight:500}
+.rbar .fav{color:var(--gilt);font-size:20px}
+.rbody{max-width:640px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));padding-block:22px 80px}
+.rbody h1{font-family:var(--serif);font-weight:500;font-size:calc(30px*var(--scale));line-height:1.15;margin:0;text-wrap:balance}
+.rbody .src{color:var(--rubric);font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin:0 0 8px}
+.rubric{font-family:var(--serif);font-style:italic;color:var(--rubric);font-size:calc(17px*var(--scale));line-height:1.5;margin:14px 0}
+.text{font-family:var(--serif);font-size:calc(21px*var(--scale));line-height:1.62;margin-top:18px}
+.text p{margin:0 0 .8em;max-width:34em}
+.text p.first::first-letter{float:left;font-size:3.3em;line-height:.85;padding:.06em .08em 0 0;color:var(--rubric);font-weight:500}
+.text sup{color:var(--rubric);font-family:var(--sans);font-size:.55em;font-weight:600;margin-right:.25em;vertical-align:.5em}
+.mode{display:inline-flex;border:1px solid var(--rule);border-radius:10px;padding:3px;margin-top:16px}
+.mode button{padding:8px 14px;border-radius:7px;font-size:14px;font-weight:500;color:var(--muted)}
+.mode button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.versions{margin-top:28px;padding-top:14px;border-top:1px solid var(--rule);font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
+.versions a{text-decoration:none;font-weight:600}
+
+.step{margin-top:22px}
+.step .prog{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.06em;text-transform:uppercase}
+.bar{height:3px;background:var(--rule);border-radius:2px;margin:8px 0 22px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--rubric);transition:width .25s}
+.step .theme{font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gilt)}
+.step .big{font-family:var(--serif);font-size:calc(26px*var(--scale));line-height:1.4;margin:8px 0 6px}
+.step .guide{font-size:calc(16.5px*var(--scale));line-height:1.55;color:var(--ink);background:var(--leaf);padding:14px 16px;border-radius:10px;margin-top:14px}
+.step .guide b{color:var(--rubric);font-weight:600}
+.stepnav{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+.stepnav .btn{flex:1}
+.amen{text-align:center;padding:40px 0 10px}
+.amen .a{font-family:var(--serif);font-size:44px;color:var(--rubric);font-style:italic}
+
+/* Prayer list */
+nav.tabs .in{grid-template-columns:repeat(6,1fr)}
+nav.tabs a{font-size:11.5px;padding-inline:2px;white-space:nowrap}
+.seg{margin:0 0 18px}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px}
+.day{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 7px;border:1px solid var(--rule);border-radius:10px;font-size:13px;color:var(--muted)}
+.day b{font-family:var(--serif);font-size:19px;font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.day.today span{color:var(--rubric);font-weight:600}
+.day[aria-pressed="true"]{background:var(--ink);border-color:var(--ink)}
+.day[aria-pressed="true"] b,.day[aria-pressed="true"] span{color:var(--paper)}
+.dayhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.count{font-family:var(--serif);font-size:22px}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--leaf);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:19px;color:var(--rubric);flex:none}
+.avatar.grp{border-radius:10px}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.tag{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--leaf);color:var(--muted)}
+.empty{background:var(--leaf);border-radius:12px;padding:22px 18px}
+.empty .big{font-family:var(--serif);font-size:24px}
+.empty p{color:var(--muted);line-height:1.5;margin:6px 0 14px}
+.addbtn{width:100%;margin-top:14px;border-style:dashed;color:var(--rubric)}
+.savenote{font-size:13px;color:var(--muted);margin-top:22px;text-align:center}
+.cats{border-top:1px solid var(--rule)}
+.cat{border-bottom:1px solid var(--rule)}
+.cathead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;width:100%;text-align:left;padding:14px 2px}
+.cathead .t{font-family:var(--serif);font-size:20px}
+.cathead .s{grid-column:1;font-size:13.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cathead .chev{grid-column:2;grid-row:1/3;align-self:center;font-size:22px;color:var(--rubric)}
+.catbody{padding:0 2px 18px;display:flex;flex-direction:column;gap:10px}
+.verse{background:var(--leaf);border-radius:10px;padding:12px 14px}
+.vref{font-size:12.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--rubric)}
+.vtext{font-family:var(--serif);font-size:18px;line-height:1.5;margin-top:4px}
+.rm{font-size:13px;color:var(--muted);margin-top:6px;padding:4px 0;text-decoration:underline}
+.form,.addv{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.form label,.addv label,.flabel{font-size:13px;color:var(--muted);font-weight:600;margin-top:8px;display:flex;justify-content:space-between;align-items:center}
+.form input,.addv input,.form textarea,.addv textarea{font:inherit;font-size:17px;padding:11px 12px;border-radius:8px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);width:100%}
+.form textarea,.addv textarea{resize:vertical;font-family:var(--serif);font-size:18px}
+.linkish{color:var(--rubric);font-size:13px;font-weight:600}
+.btn.danger{color:var(--rubric);border-color:var(--rubric)}
+.btn.ghost{border-color:transparent;color:var(--muted)}
+a.btn{text-decoration:none;color:var(--ink);display:inline-flex;align-items:center}
+.err{color:var(--rubric);font-size:14px;margin:0}
+.ask{margin-top:22px}
+.asklabel{font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gilt)}
+.ask blockquote{margin:6px 0 0;font-family:var(--serif);font-size:calc(20px*var(--scale));line-height:1.5}
+.ask blockquote+blockquote{margin-top:14px}
+.mode{flex-wrap:wrap;max-width:100%}
+.check{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:15px}
+.check input{width:20px;height:20px;accent-color:var(--rubric)}
+.preview{width:100%;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:13px;line-height:1.5;padding:12px;border-radius:10px;border:1px solid var(--rule);background:var(--leaf);color:var(--ink);resize:vertical;white-space:pre;overflow:auto}
+.prayerbox{margin-top:14px;border:1.5px solid var(--gilt);border-radius:12px;padding:14px 16px;background:var(--leaf)}
+.prayerbox .pl{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gilt);margin-bottom:6px}
+.prayerbox .pt{font-family:var(--serif);font-size:calc(20px*var(--scale));line-height:1.45}
+.ask+.ask{padding-top:20px;border-top:1px solid var(--rule)}
+.ask cite{display:block;font-style:normal;font-family:var(--sans);font-size:13px;color:var(--rubric);margin-top:4px;font-weight:600}
+
+/* Home */
+.hero{text-align:center;margin:4px 0 22px}
+.hero img{width:88px;height:88px;border-radius:20px;display:block;margin:0 auto 12px;box-shadow:0 6px 18px rgba(30,70,120,.18)}
+.hero h1{font-family:var(--serif);font-weight:500;font-size:34px;margin:0;line-height:1.1}
+.hero p{margin:6px 0 0;color:var(--muted)}
+.pick{display:block;text-decoration:none;color:var(--ink);background:var(--leaf);border:1px solid var(--rule);border-left:4px solid var(--gilt);border-radius:12px;padding:14px 16px;margin:0 0 12px}
+.pick b{display:block;font-family:var(--serif);font-weight:500;font-size:21px;line-height:1.2}
+.pick span{display:block;color:var(--muted);font-size:14.5px;line-height:1.4;margin-top:3px}
+.pick em{display:block;font-style:normal;color:var(--rubric);font-size:13.5px;font-weight:600;margin-top:6px}
+body[data-page="home"] header.top .brand{visibility:hidden}
+body[data-page="home"] header.top{border-bottom-color:transparent;margin-bottom:0}
+
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap" id="app">
+  <header class="top">
+    <a class="brand" href="#home" style="color:inherit;text-decoration:none"><small>Daily Office</small>Prayer Book</a>
+    <div class="sizer" aria-label="Text size">
+      <button id="smaller" aria-label="Smaller text">A</button>
+      <button id="larger" aria-label="Larger text">A</button>
+    </div>
+  </header>
+  <main id="view"></main>
+</div>
+
+<nav class="tabs" aria-label="Sections"><div class="in">
+  <a href="#home" data-tab="home"><span class="g">⌂</span>Home</a>
+  <a href="#prayers" data-tab="prayers"><span class="g">✠</span>Prayers</a>
+  <a href="#psalms" data-tab="psalms"><span class="g">ψ</span>Psalms</a>
+  <a href="#ourfather" data-tab="ourfather"><span class="g">☩</span>Our Father</a>
+  <a href="#paul" data-tab="paul"><span class="g">✉</span>Paul</a>
+  <a href="#list" data-tab="list"><span class="g">☷</span>My List</a>
+</div></nav>
+
+<div class="reader" id="reader" hidden>
+  <div class="rbar"><div class="in">
+    <button id="back">‹ Back</button>
+    <button class="fav" id="fav" aria-label="Save to favorites">☆</button>
+  </div></div>
+  <div class="rbody" id="rbody"></div>
+</div>
+
+<script>
+/* ---------- Text (KJV and historic public-domain prayers) ---------- */
+const PRAYERS = [
+ {id:"jesus",title:"The Jesus Prayer",src:"Eastern Church, ancient",tags:["Confession","Short"],
+  rub:"Pray slowly, in rhythm with your breathing. Repeat as long as you like.",
+  text:["Lord Jesus Christ, Son of God, have mercy on me, a sinner."]},
+ {id:"purity",title:"Collect for Purity",src:"Book of Common Prayer, 1662",tags:["Historic","Morning"],
+  text:["Almighty God, unto whom all hearts be open, all desires known, and from whom no secrets are hid: Cleanse the thoughts of our hearts by the inspiration of thy Holy Spirit, that we may perfectly love thee, and worthily magnify thy holy Name; through Christ our Lord. Amen."]},
+ {id:"grace",title:"A Collect for Grace",src:"Book of Common Prayer, 1662 · Morning Prayer",tags:["Historic","Morning"],
+  text:["O Lord, our heavenly Father, Almighty and everlasting God, who hast safely brought us to the beginning of this day: Defend us in the same with thy mighty power; and grant that this day we fall into no sin, neither run into any kind of danger; but that all our doings may be ordered by thy governance, to do always that is righteous in thy sight; through Jesus Christ our Lord. Amen."]},
+ {id:"lighten",title:"Lighten Our Darkness",src:"Book of Common Prayer, 1662 · Evening Prayer",tags:["Historic","Evening","Short"],
+  text:["Lighten our darkness, we beseech thee, O Lord; and by thy great mercy defend us from all perils and dangers of this night; for the love of thy only Son, our Saviour, Jesus Christ. Amen."]},
+ {id:"thanks",title:"The General Thanksgiving",src:"Book of Common Prayer, 1662",tags:["Historic","Thanks"],
+  text:["Almighty God, Father of all mercies, we thine unworthy servants do give thee most humble and hearty thanks for all thy goodness and loving-kindness to us, and to all men.",
+  "We bless thee for our creation, preservation, and all the blessings of this life; but above all for thine inestimable love in the redemption of the world by our Lord Jesus Christ; for the means of grace, and for the hope of glory.",
+  "And, we beseech thee, give us that due sense of all thy mercies, that our hearts may be unfeignedly thankful, and that we shew forth thy praise, not only with our lips, but in our lives; by giving up ourselves to thy service, and by walking before thee in holiness and righteousness all our days; through Jesus Christ our Lord, to whom with thee and the Holy Ghost be all honour and glory, world without end. Amen."]},
+ {id:"francis",title:"Make Me an Instrument of Your Peace",src:"Prayer attributed to St. Francis · first printed 1912",tags:["Historic"],
+  text:["Lord, make me an instrument of your peace; where there is hatred, let me sow love; where there is injury, pardon; where there is doubt, faith; where there is despair, hope; where there is darkness, light; and where there is sadness, joy.",
+  "O Divine Master, grant that I may not so much seek to be consoled as to console; to be understood as to understand; to be loved as to love.",
+  "For it is in giving that we receive; it is in pardoning that we are pardoned; and it is in dying that we are born to eternal life. Amen."]},
+ {id:"patrick",title:"Christ Be With Me",src:"St. Patrick's Breastplate · tr. C. F. Alexander, 1889",tags:["Historic","Morning"],
+  text:["Christ be with me, Christ within me, Christ behind me, Christ before me, Christ beside me, Christ to win me, Christ to comfort and restore me.",
+  "Christ beneath me, Christ above me, Christ in quiet, Christ in danger, Christ in hearts of all that love me, Christ in mouth of friend and stranger."]},
+ {id:"wesley",title:"The Covenant Prayer",src:"John Wesley's Covenant Service, 1780",tags:["Historic","Surrender"],
+  text:["I am no longer my own, but thine. Put me to what thou wilt, rank me with whom thou wilt. Put me to doing, put me to suffering. Let me be employed for thee or laid aside for thee, exalted for thee or brought low for thee.",
+  "Let me be full, let me be empty. Let me have all things, let me have nothing. I freely and heartily yield all things to thy pleasure and disposal.",
+  "And now, O glorious and blessed God, Father, Son, and Holy Spirit, thou art mine, and I am thine. So be it. And the covenant which I have made on earth, let it be ratified in heaven. Amen."]},
+ {id:"augustine",title:"Our Heart Is Restless",src:"St. Augustine, Confessions I.1 · tr. E. B. Pusey",tags:["Historic","Short"],
+  text:["Great art Thou, O Lord, and greatly to be praised. Thou awakest us to delight in Thy praise; for Thou madest us for Thyself, and our heart is restless, until it repose in Thee."]},
+ {id:"doxology",title:"The Doxology",src:"Thomas Ken, 1674",tags:["Historic","Thanks","Short"],
+  text:["Praise God, from whom all blessings flow; praise him, all creatures here below; praise him above, ye heavenly host; praise Father, Son, and Holy Ghost. Amen."]},
+ {id:"jabez",title:"The Prayer of Jabez",src:"1 Chronicles 4:10",tags:["Scripture","Short"],
+  text:["Oh that thou wouldest bless me indeed, and enlarge my coast, and that thine hand might be with me, and that thou wouldest keep me from evil, that it may not grieve me!"],
+  after:"And God granted him that which he requested."},
+ {id:"solomon",title:"Solomon's Prayer for Wisdom",src:"1 Kings 3:9",tags:["Scripture","Short"],
+  text:["Give therefore thy servant an understanding heart to judge thy people, that I may discern between good and bad: for who is able to judge this thy so great a people?"]},
+ {id:"gethsemane",title:"Not My Will",src:"Jesus in Gethsemane · Matthew 26:39",tags:["Scripture","Surrender","Short"],
+  text:["O my Father, if it be possible, let this cup pass from me: nevertheless not as I will, but as thou wilt."]},
+ {id:"publican",title:"The Sinner's Prayer",src:"The tax collector · Luke 18:13",tags:["Scripture","Confession","Short"],
+  text:["God be merciful to me a sinner."]},
+ {id:"aaron",title:"The Priestly Blessing",src:"Numbers 6:24–26",tags:["Scripture","Blessing","Evening"],
+  rub:"Pray this over someone you love, or receive it for yourself.",
+  text:["The LORD bless thee, and keep thee: The LORD make his face shine upon thee, and be gracious unto thee: The LORD lift up his countenance upon thee, and give thee peace."]}
+];
+
+const PSALMS = [
+ {n:1,t:"The two ways",tag:"Wisdom",v:["Blessed is the man that walketh not in the counsel of the ungodly, nor standeth in the way of sinners, nor sitteth in the seat of the scornful.","But his delight is in the law of the LORD; and in his law doth he meditate day and night.","And he shall be like a tree planted by the rivers of water, that bringeth forth his fruit in his season; his leaf also shall not wither; and whatsoever he doeth shall prosper.","The ungodly are not so: but are like the chaff which the wind driveth away.","Therefore the ungodly shall not stand in the judgment, nor sinners in the congregation of the righteous.","For the LORD knoweth the way of the righteous: but the way of the ungodly shall perish."]},
+ {n:8,t:"How excellent is thy name",tag:"Praise",v:["O LORD our Lord, how excellent is thy name in all the earth! who hast set thy glory above the heavens.","Out of the mouth of babes and sucklings hast thou ordained strength because of thine enemies, that thou mightest still the enemy and the avenger.","When I consider thy heavens, the work of thy fingers, the moon and the stars, which thou hast ordained;","What is man, that thou art mindful of him? and the son of man, that thou visitest him?","For thou hast made him a little lower than the angels, and hast crowned him with glory and honour.","Thou madest him to have dominion over the works of thy hands; thou hast put all things under his feet:","All sheep and oxen, yea, and the beasts of the field;","The fowl of the air, and the fish of the sea, and whatsoever passeth through the paths of the seas.","O LORD our Lord, how excellent is thy name in all the earth!"]},
+ {n:19,t:"The heavens declare",tag:"Praise",v:["The heavens declare the glory of God; and the firmament sheweth his handywork.","Day unto day uttereth speech, and night unto night sheweth knowledge.","There is no speech nor language, where their voice is not heard.","Their line is gone out through all the earth, and their words to the end of the world. In them hath he set a tabernacle for the sun,","Which is as a bridegroom coming out of his chamber, and rejoiceth as a strong man to run a race.","His going forth is from the end of the heaven, and his circuit unto the ends of it: and there is nothing hid from the heat thereof.","The law of the LORD is perfect, converting the soul: the testimony of the LORD is sure, making wise the simple.","The statutes of the LORD are right, rejoicing the heart: the commandment of the LORD is pure, enlightening the eyes.","The fear of the LORD is clean, enduring for ever: the judgments of the LORD are true and righteous altogether.","More to be desired are they than gold, yea, than much fine gold: sweeter also than honey and the honeycomb.","Moreover by them is thy servant warned: and in keeping of them there is great reward.","Who can understand his errors? cleanse thou me from secret faults.","Keep back thy servant also from presumptuous sins; let them not have dominion over me: then shall I be upright, and I shall be innocent from the great transgression.","Let the words of my mouth, and the meditation of my heart, be acceptable in thy sight, O LORD, my strength, and my redeemer."]},
+ {n:23,t:"The Lord is my shepherd",tag:"Trust",v:["The LORD is my shepherd; I shall not want.","He maketh me to lie down in green pastures: he leadeth me beside the still waters.","He restoreth my soul: he leadeth me in the paths of righteousness for his name's sake.","Yea, though I walk through the valley of the shadow of death, I will fear no evil: for thou art with me; thy rod and thy staff they comfort me.","Thou preparest a table before me in the presence of mine enemies: thou anointest my head with oil; my cup runneth over.","Surely goodness and mercy shall follow me all the days of my life: and I will dwell in the house of the LORD for ever."]},
+ {n:27,t:"My light and my salvation",tag:"Trust",v:["The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?","When the wicked, even mine enemies and my foes, came upon me to eat up my flesh, they stumbled and fell.","Though an host should encamp against me, my heart shall not fear: though war should rise against me, in this will I be confident.","One thing have I desired of the LORD, that will I seek after; that I may dwell in the house of the LORD all the days of my life, to behold the beauty of the LORD, and to enquire in his temple.","For in the time of trouble he shall hide me in his pavilion: in the secret of his tabernacle shall he hide me; he shall set me up upon a rock.","And now shall mine head be lifted up above mine enemies round about me: therefore will I offer in his tabernacle sacrifices of joy; I will sing, yea, I will sing praises unto the LORD.","Hear, O LORD, when I cry with my voice: have mercy also upon me, and answer me.","When thou saidst, Seek ye my face; my heart said unto thee, Thy face, LORD, will I seek.","Hide not thy face far from me; put not thy servant away in anger: thou hast been my help; leave me not, neither forsake me, O God of my salvation.","When my father and my mother forsake me, then the LORD will take me up.","Teach me thy way, O LORD, and lead me in a plain path, because of mine enemies.","Deliver me not over unto the will of mine enemies: for false witnesses are risen up against me, and such as breathe out cruelty.","I had fainted, unless I had believed to see the goodness of the LORD in the land of the living.","Wait on the LORD: be of good courage, and he shall strengthen thine heart: wait, I say, on the LORD."]},
+ {n:46,t:"Be still, and know",tag:"Trust",v:["God is our refuge and strength, a very present help in trouble.","Therefore will not we fear, though the earth be removed, and though the mountains be carried into the midst of the sea;","Though the waters thereof roar and be troubled, though the mountains shake with the swelling thereof. Selah.","There is a river, the streams whereof shall make glad the city of God, the holy place of the tabernacles of the most High.","God is in the midst of her; she shall not be moved: God shall help her, and that right early.","The heathen raged, the kingdoms were moved: he uttered his voice, the earth melted.","The LORD of hosts is with us; the God of Jacob is our refuge. Selah.","Come, behold the works of the LORD, what desolations he hath made in the earth.","He maketh wars to cease unto the end of the earth; he breaketh the bow, and cutteth the spear in sunder; he burneth the chariot in the fire.","Be still, and know that I am God: I will be exalted among the heathen, I will be exalted in the earth.","The LORD of hosts is with us; the God of Jacob is our refuge. Selah."]},
+ {n:51,t:"Create in me a clean heart",tag:"Confession",v:["Have mercy upon me, O God, according to thy lovingkindness: according unto the multitude of thy tender mercies blot out my transgressions.","Wash me throughly from mine iniquity, and cleanse me from my sin.","For I acknowledge my transgressions: and my sin is ever before me.","Against thee, thee only, have I sinned, and done this evil in thy sight: that thou mightest be justified when thou speakest, and be clear when thou judgest.","Behold, I was shapen in iniquity; and in sin did my mother conceive me.","Behold, thou desirest truth in the inward parts: and in the hidden part thou shalt make me to know wisdom.","Purge me with hyssop, and I shall be clean: wash me, and I shall be whiter than snow.","Make me to hear joy and gladness; that the bones which thou hast broken may rejoice.","Hide thy face from my sins, and blot out all mine iniquities.","Create in me a clean heart, O God; and renew a right spirit within me.","Cast me not away from thy presence; and take not thy holy spirit from me.","Restore unto me the joy of thy salvation; and uphold me with thy free spirit.","Then will I teach transgressors thy ways; and sinners shall be converted unto thee.","Deliver me from bloodguiltiness, O God, thou God of my salvation: and my tongue shall sing aloud of thy righteousness.","O Lord, open thou my lips; and my mouth shall shew forth thy praise.","For thou desirest not sacrifice; else would I give it: thou delightest not in burnt offering.","The sacrifices of God are a broken spirit: a broken and a contrite heart, O God, thou wilt not despise.","Do good in thy good pleasure unto Zion: build thou the walls of Jerusalem.","Then shalt thou be pleased with the sacrifices of righteousness, with burnt offering and whole burnt offering: then shall they offer bullocks upon thine altar."]},
+ {n:63,t:"Early will I seek thee",tag:"Morning",v:["O God, thou art my God; early will I seek thee: my soul thirsteth for thee, my flesh longeth for thee in a dry and thirsty land, where no water is;","To see thy power and thy glory, so as I have seen thee in the sanctuary.","Because thy lovingkindness is better than life, my lips shall praise thee.","Thus will I bless thee while I live: I will lift up my hands in thy name.","My soul shall be satisfied as with marrow and fatness; and my mouth shall praise thee with joyful lips:","When I remember thee upon my bed, and meditate on thee in the night watches.","Because thou hast been my help, therefore in the shadow of thy wings will I rejoice.","My soul followeth hard after thee: thy right hand upholdeth me.","But those that seek my soul, to destroy it, shall go into the lower parts of the earth.","They shall fall by the sword: they shall be a portion for foxes.","But the king shall rejoice in God; every one that sweareth by him shall glory: but the mouth of them that speak lies shall be stopped."]},
+ {n:91,t:"Under his wings",tag:"Protection",v:["He that dwelleth in the secret place of the most High shall abide under the shadow of the Almighty.","I will say of the LORD, He is my refuge and my fortress: my God; in him will I trust.","Surely he shall deliver thee from the snare of the fowler, and from the noisome pestilence.","He shall cover thee with his feathers, and under his wings shalt thou trust: his truth shall be thy shield and buckler.","Thou shalt not be afraid for the terror by night; nor for the arrow that flieth by day;","Nor for the pestilence that walketh in darkness; nor for the destruction that wasteth at noonday.","A thousand shall fall at thy side, and ten thousand at thy right hand; but it shall not come nigh thee.","Only with thine eyes shalt thou behold and see the reward of the wicked.","Because thou hast made the LORD, which is my refuge, even the most High, thy habitation;","There shall no evil befall thee, neither shall any plague come nigh thy dwelling.","For he shall give his angels charge over thee, to keep thee in all thy ways.","They shall bear thee up in their hands, lest thou dash thy foot against a stone.","Thou shalt tread upon the lion and adder: the young lion and the dragon shalt thou trample under feet.","Because he hath set his love upon me, therefore will I deliver him: I will set him on high, because he hath known my name.","He shall call upon me, and I will answer him: I will be with him in trouble; I will deliver him, and honour him.","With long life will I satisfy him, and shew him my salvation."]},
+ {n:100,t:"Enter his gates with thanksgiving",tag:"Praise",v:["Make a joyful noise unto the LORD, all ye lands.","Serve the LORD with gladness: come before his presence with singing.","Know ye that the LORD he is God: it is he that hath made us, and not we ourselves; we are his people, and the sheep of his pasture.","Enter into his gates with thanksgiving, and into his courts with praise: be thankful unto him, and bless his name.","For the LORD is good; his mercy is everlasting; and his truth endureth to all generations."]},
+ {n:103,t:"Bless the Lord, O my soul",tag:"Praise",v:["Bless the LORD, O my soul: and all that is within me, bless his holy name.","Bless the LORD, O my soul, and forget not all his benefits:","Who forgiveth all thine iniquities; who healeth all thy diseases;","Who redeemeth thy life from destruction; who crowneth thee with lovingkindness and tender mercies;","Who satisfieth thy mouth with good things; so that thy youth is renewed like the eagle's.","The LORD executeth righteousness and judgment for all that are oppressed.","He made known his ways unto Moses, his acts unto the children of Israel.","The LORD is merciful and gracious, slow to anger, and plenteous in mercy.","He will not always chide: neither will he keep his anger for ever.","He hath not dealt with us after our sins; nor rewarded us according to our iniquities.","For as the heaven is high above the earth, so great is his mercy toward them that fear him.","As far as the east is from the west, so far hath he removed our transgressions from us.","Like as a father pitieth his children, so the LORD pitieth them that fear him.","For he knoweth our frame; he remembereth that we are dust.","As for man, his days are as grass: as a flower of the field, so he flourisheth.","For the wind passeth over it, and it is gone; and the place thereof shall know it no more.","But the mercy of the LORD is from everlasting to everlasting upon them that fear him, and his righteousness unto children's children;","To such as keep his covenant, and to those that remember his commandments to do them.","The LORD hath prepared his throne in the heavens; and his kingdom ruleth over all.","Bless the LORD, ye his angels, that excel in strength, that do his commandments, hearkening unto the voice of his word.","Bless ye the LORD, all ye his hosts; ye ministers of his, that do his pleasure.","Bless the LORD, all his works in all places of his dominion: bless the LORD, O my soul."]},
+ {n:121,t:"I will lift up mine eyes",tag:"Protection",v:["I will lift up mine eyes unto the hills, from whence cometh my help.","My help cometh from the LORD, which made heaven and earth.","He will not suffer thy foot to be moved: he that keepeth thee will not slumber.","Behold, he that keepeth Israel shall neither slumber nor sleep.","The LORD is thy keeper: the LORD is thy shade upon thy right hand.","The sun shall not smite thee by day, nor the moon by night.","The LORD shall preserve thee from all evil: he shall preserve thy soul.","The LORD shall preserve thy going out and thy coming in from this time forth, and even for evermore."]},
+ {n:130,t:"Out of the depths",tag:"Confession",v:["Out of the depths have I cried unto thee, O LORD.","Lord, hear my voice: let thine ears be attentive to the voice of my supplications.","If thou, LORD, shouldest mark iniquities, O Lord, who shall stand?","But there is forgiveness with thee, that thou mayest be feared.","I wait for the LORD, my soul doth wait, and in his word do I hope.","My soul waiteth for the Lord more than they that watch for the morning: I say, more than they that watch for the morning.","Let Israel hope in the LORD: for with the LORD there is mercy, and with him is plenteous redemption.","And he shall redeem Israel from all his iniquities."]},
+ {n:139,t:"Search me, O God",tag:"Confession",v:["O LORD, thou hast searched me, and known me.","Thou knowest my downsitting and mine uprising, thou understandest my thought afar off.","Thou compassest my path and my lying down, and art acquainted with all my ways.","For there is not a word in my tongue, but, lo, O LORD, thou knowest it altogether.","Thou hast beset me behind and before, and laid thine hand upon me.","Such knowledge is too wonderful for me; it is high, I cannot attain unto it.","Whither shall I go from thy spirit? or whither shall I flee from thy presence?","If I ascend up into heaven, thou art there: if I make my bed in hell, behold, thou art there.","If I take the wings of the morning, and dwell in the uttermost parts of the sea;","Even there shall thy hand lead me, and thy right hand shall hold me.","If I say, Surely the darkness shall cover me; even the night shall be light about me.","Yea, the darkness hideth not from thee; but the night shineth as the day: the darkness and the light are both alike to thee.","For thou hast possessed my reins: thou hast covered me in my mother's womb.","I will praise thee; for I am fearfully and wonderfully made: marvellous are thy works; and that my soul knoweth right well.","My substance was not hid from thee, when I was made in secret, and curiously wrought in the lowest parts of the earth.","Thine eyes did see my substance, yet being unperfect; and in thy book all my members were written, which in continuance were fashioned, when as yet there was none of them.","How precious also are thy thoughts unto me, O God! how great is the sum of them!","If I should count them, they are more in number than the sand: when I awake, I am still with thee.","Surely thou wilt slay the wicked, O God: depart from me therefore, ye bloody men.","For they speak against thee wickedly, and thine enemies take thy name in vain.","Do not I hate them, O LORD, that hate thee? and am not I grieved with those that rise up against thee?","I hate them with perfect hatred: I count them mine enemies.","Search me, O God, and know my heart: try me, and know my thoughts:","And see if there be any wicked way in me, and lead me in the way everlasting."]},
+ {n:150,t:"Let every thing that hath breath",tag:"Praise",v:["Praise ye the LORD. Praise God in his sanctuary: praise him in the firmament of his power.","Praise him for his mighty acts: praise him according to his excellent greatness.","Praise him with the sound of the trumpet: praise him with the psaltery and harp.","Praise him with the timbrel and dance: praise him with stringed instruments and organs.","Praise him upon the loud cymbals: praise him upon the high sounding cymbals.","Let every thing that hath breath praise the LORD. Praise ye the LORD."]}
+];
+
+const PAUL = [
+ {id:"eph1",ref:"Ephesians 1:15–23",t:"Eyes of the heart enlightened",ask:"Wisdom, revelation, and hope",start:15,v:["Wherefore I also, after I heard of your faith in the Lord Jesus, and love unto all the saints,","Cease not to give thanks for you, making mention of you in my prayers;","That the God of our Lord Jesus Christ, the Father of glory, may give unto you the spirit of wisdom and revelation in the knowledge of him:","The eyes of your understanding being enlightened; that ye may know what is the hope of his calling, and what the riches of the glory of his inheritance in the saints,","And what is the exceeding greatness of his power to us-ward who believe, according to the working of his mighty power,","Which he wrought in Christ, when he raised him from the dead, and set him at his own right hand in the heavenly places,","Far above all principality, and power, and might, and dominion, and every name that is named, not only in this world, but also in that which is to come:","And hath put all things under his feet, and gave him to be the head over all things to the church,","Which is his body, the fulness of him that filleth all in all."]},
+ {id:"eph3",ref:"Ephesians 3:14–21",t:"Rooted and grounded in love",ask:"Inner strength and the love of Christ",start:14,v:["For this cause I bow my knees unto the Father of our Lord Jesus Christ,","Of whom the whole family in heaven and earth is named,","That he would grant you, according to the riches of his glory, to be strengthened with might by his Spirit in the inner man;","That Christ may dwell in your hearts by faith; that ye, being rooted and grounded in love,","May be able to comprehend with all saints what is the breadth, and length, and depth, and height;","And to know the love of Christ, which passeth knowledge, that ye might be filled with all the fulness of God.","Now unto him that is able to do exceeding abundantly above all that we ask or think, according to the power that worketh in us,","Unto him be glory in the church by Christ Jesus throughout all ages, world without end. Amen."]},
+ {id:"phil1",ref:"Philippians 1:9–11",t:"That your love may abound",ask:"Growing love and discernment",start:9,v:["And this I pray, that your love may abound yet more and more in knowledge and in all judgment;","That ye may approve things that are excellent; that ye may be sincere and without offence till the day of Christ;","Being filled with the fruits of righteousness, which are by Jesus Christ, unto the glory and praise of God."]},
+ {id:"col1",ref:"Colossians 1:9–14",t:"Filled with the knowledge of his will",ask:"Direction, fruit, and endurance",start:9,v:["For this cause we also, since the day we heard it, do not cease to pray for you, and to desire that ye might be filled with the knowledge of his will in all wisdom and spiritual understanding;","That ye might walk worthy of the Lord unto all pleasing, being fruitful in every good work, and increasing in the knowledge of God;","Strengthened with all might, according to his glorious power, unto all patience and longsuffering with joyfulness;","Giving thanks unto the Father, which hath made us meet to be partakers of the inheritance of the saints in light:","Who hath delivered us from the power of darkness, and hath translated us into the kingdom of his dear Son:","In whom we have redemption through his blood, even the forgiveness of sins:"]},
+ {id:"thess1",ref:"1 Thessalonians 3:11–13",t:"Increase and abound in love",ask:"Love for others and a holy heart",start:11,v:["Now God himself and our Father, and our Lord Jesus Christ, direct our way unto you.","And the Lord make you to increase and abound in love one toward another, and toward all men, even as we do toward you:","To the end he may stablish your hearts unblameable in holiness before God, even our Father, at the coming of our Lord Jesus Christ with all his saints."]},
+ {id:"thess2",ref:"2 Thessalonians 1:11–12",t:"Worthy of this calling",ask:"Faith that works with power",start:11,v:["Wherefore also we pray always for you, that our God would count you worthy of this calling, and fulfil all the good pleasure of his goodness, and the work of faith with power:","That the name of our Lord Jesus Christ may be glorified in you, and ye in him, according to the grace of our God and the Lord Jesus Christ."]},
+ {id:"rom15",ref:"Romans 15:13",t:"The God of hope",ask:"Joy, peace, and hope",start:13,v:["Now the God of hope fill you with all joy and peace in believing, that ye may abound in hope, through the power of the Holy Ghost."]},
+ {id:"rom10",ref:"Romans 10:1",t:"That they might be saved",ask:"For those who don't yet know Christ",start:1,v:["Brethren, my heart's desire and prayer to God for Israel is, that they might be saved."]},
+ {id:"cor13",ref:"2 Corinthians 13:14",t:"The grace of the Lord Jesus",ask:"A closing blessing",start:14,v:["The grace of the Lord Jesus Christ, and the love of God, and the communion of the Holy Ghost, be with you all. Amen."]}
+];
+
+const OUR_FATHER = [
+ {theme:"Relationship",line:"Our Father which art in heaven,",guide:"Come as a child to a Father. <b>Thank him</b> that through Christ you are his, and that he hears you right now.",ref:"Romans 8:15"},
+ {theme:"Worship",line:"Hallowed be thy name.",guide:"<b>Praise him</b> for who he is. Name what you know of him: Shepherd, Provider, Healer, Rock, Redeemer.",ref:"Psalm 34:3"},
+ {theme:"His kingdom",line:"Thy kingdom come.",guide:"<b>Pray for the gospel</b> to go out. Name people you know who don't yet know Christ, your church, and your pastor.",ref:"Matthew 9:38"},
+ {theme:"Surrender",line:"Thy will be done in earth, as it is in heaven.",guide:"<b>Lay today before him.</b> Your plans, your work, your decisions. Ask for his way over your own.",ref:"Proverbs 3:5–6"},
+ {theme:"Provision",line:"Give us this day our daily bread.",guide:"<b>Ask plainly</b> for what you need today: strength for your body, work for your hands, needs in your family.",ref:"Philippians 4:19"},
+ {theme:"Forgiveness",line:"And forgive us our debts, as we forgive our debtors.",guide:"<b>Confess</b> specific sins and receive his forgiveness. Then <b>release</b> anyone you are holding a grudge against.",ref:"1 John 1:9"},
+ {theme:"Protection",line:"And lead us not into temptation, but deliver us from evil:",guide:"<b>Name where you are weak</b> today. Ask him to guard your mind, your eyes, and your words.",ref:"Ephesians 6:10–11"},
+ {theme:"Praise and trust",line:"For thine is the kingdom, and the power, and the glory, for ever. Amen.",guide:"<b>End with confidence.</b> Everything you asked rests in his hands, and he is able.",ref:"Ephesians 3:20"}
+];
+
+/* ---------- State ---------- */
+const store = {
+  get(k,d){try{const v=localStorage.getItem("pb_"+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem("pb_"+k,JSON.stringify(v))}catch(e){}}
+};
+let scale = store.get("scale",1);
+let favs = new Set(store.get("favs",[]));
+let prayerFilter = "All";
+let current = null;     // {kind, key}
+let mode = "read";
+let curTab = (location.hash||"#home").slice(1);      // read | pray
+let stepIdx = 0;
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+const bgLink = (q,ver) => "https://www.biblegateway.com/passage/?search="+encodeURIComponent(q)+"&version="+ver;
+const VERSIONS = ["NKJV","ESV","NIV","NLT","NASB"];
+
+function applyScale(){document.documentElement.style.setProperty("--scale",scale);store.set("scale",scale)}
+$("#smaller").onclick=()=>{scale=Math.max(.85,+(scale-.1).toFixed(2));applyScale()};
+$("#larger").onclick=()=>{scale=Math.min(1.6,+(scale+.1).toFixed(2));applyScale()};
+applyScale();
+
+/* ---------- Prayer list data ---------- */
+const CATS=[
+ {id:"strength",name:"Strength",ask:"Ask the Lord to renew {n}'s strength for whatever {they} {are} carrying today."},
+ {id:"courage",name:"Courage",ask:"Pray that {n} would be bold and unafraid, knowing the Lord goes with {them}."},
+ {id:"healing",name:"Healing",ask:"Ask God to heal {n} in body, mind, and heart."},
+ {id:"growth",name:"Spiritual growth",ask:"Pray that {n} would grow in grace and in the knowledge of Jesus."},
+ {id:"blessing",name:"Blessing",ask:"Ask God to bless {n}, keep {them}, and make his face shine on {them}."},
+ {id:"warfare",name:"Warfare",ask:"Stand against the enemy on {n}'s behalf. Ask God to clothe {them} in his armor and guard {them} from the evil one."},
+ {id:"grace",name:"Grace",ask:"Ask that God's grace would be enough for {n} in every weakness."},
+ {id:"forgiveness",name:"Forgiveness",ask:"Pray that {n} would receive God's forgiveness and freely forgive others."},
+ {id:"salvation",name:"Salvation",ask:"Pray that {n} would come to know Jesus as Lord and Savior."},
+ {id:"humility",name:"Humility",ask:"Pray that {n} would walk humbly with God and put others first."},
+ {id:"wisdom",name:"Wisdom",ask:"Ask God to give {n} wisdom for the decisions in front of {them}, and to direct {their} paths."},
+ {id:"knowledge",name:"Knowledge",ask:"Pray that {n} would be filled with the knowledge of God's will and grow in understanding."},
+ {id:"hope",name:"Hope",ask:"Ask the God of hope to fill {n} with joy and a sure hope in him."},
+ {id:"peace",name:"Peace",ask:"Pray that God's peace, which passes all understanding, would guard {n}'s heart and mind."},
+ {id:"comfort",name:"Comfort",ask:"Ask the God of all comfort to draw near to {n} and hold {them} in {their} sorrow."},
+ {id:"purpose",name:"Purpose",ask:"Pray that {n} would know God's calling and walk in the good works he prepared for {them}."},
+ {id:"confidence",name:"Confidence",ask:"Pray that {n} would put {their} confidence in the Lord and not lose heart."},
+ {id:"deliverance",name:"Deliverance",ask:"Ask God to deliver {n} from every trouble, snare, and bondage that holds {them}."},
+ {id:"rebuke",name:"Rebuke",ask:"Ask the Lord to rebuke the enemy's work in {n}'s life, and give {n} a heart that receives his loving correction."},
+ {id:"repentance",name:"Repentance",ask:"Pray that God's kindness would lead {n} to turn from sin and return to him with a whole heart."},
+ {id:"mercy",name:"Mercy",ask:"Ask the Lord to show {n} his tender mercy, new every morning, and to make {them} merciful to others."},
+ {id:"glory",name:"God Glorified",ask:"Pray that God would be glorified in {n}'s life, and that {their} words and work would point others to him."},
+ {id:"will",name:"God's Will",ask:"Pray that God's will would be done in {n}'s life, and that {they} would know it and gladly follow it."}
+];
+const DEFAULT_SCRIPTURE={
+ strength:[{ref:"Isaiah 40:31",text:"But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint."},{ref:"Isaiah 41:10",text:"Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness."},{ref:"Philippians 4:13",text:"I can do all things through Christ which strengtheneth me."}],
+ courage:[{ref:"Joshua 1:9",text:"Have not I commanded thee? Be strong and of a good courage; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest."},{ref:"2 Timothy 1:7",text:"For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind."},{ref:"Deuteronomy 31:6",text:"Be strong and of a good courage, fear not, nor be afraid of them: for the LORD thy God, he it is that doth go with thee; he will not fail thee, nor forsake thee."}],
+ healing:[{ref:"Jeremiah 17:14",text:"Heal me, O LORD, and I shall be healed; save me, and I shall be saved: for thou art my praise."},{ref:"James 5:15",text:"And the prayer of faith shall save the sick, and the Lord shall raise him up; and if he have committed sins, they shall be forgiven him."},{ref:"Psalm 147:3",text:"He healeth the broken in heart, and bindeth up their wounds."}],
+ growth:[{ref:"2 Peter 3:18",text:"But grow in grace, and in the knowledge of our Lord and Saviour Jesus Christ. To him be glory both now and for ever. Amen."},{ref:"Philippians 1:6",text:"Being confident of this very thing, that he which hath begun a good work in you will perform it until the day of Jesus Christ."},{ref:"Colossians 2:7",text:"Rooted and built up in him, and stablished in the faith, as ye have been taught, abounding therein with thanksgiving."}],
+ blessing:[{ref:"Numbers 6:24–26",text:"The LORD bless thee, and keep thee: The LORD make his face shine upon thee, and be gracious unto thee: The LORD lift up his countenance upon thee, and give thee peace."},{ref:"3 John 1:2",text:"Beloved, I wish above all things that thou mayest prosper and be in health, even as thy soul prospereth."},{ref:"Ephesians 1:3",text:"Blessed be the God and Father of our Lord Jesus Christ, who hath blessed us with all spiritual blessings in heavenly places in Christ."}],
+ warfare:[{ref:"Ephesians 6:11",text:"Put on the whole armour of God, that ye may be able to stand against the wiles of the devil."},{ref:"James 4:7",text:"Submit yourselves therefore to God. Resist the devil, and he will flee from you."},{ref:"2 Corinthians 10:4",text:"For the weapons of our warfare are not carnal, but mighty through God to the pulling down of strong holds."}],
+ grace:[{ref:"2 Corinthians 12:9",text:"And he said unto me, My grace is sufficient for thee: for my strength is made perfect in weakness."},{ref:"Hebrews 4:16",text:"Let us therefore come boldly unto the throne of grace, that we may obtain mercy, and find grace to help in time of need."}],
+ forgiveness:[{ref:"1 John 1:9",text:"If we confess our sins, he is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."},{ref:"Ephesians 4:32",text:"And be ye kind one to another, tenderhearted, forgiving one another, even as God for Christ's sake hath forgiven you."},{ref:"Psalm 103:12",text:"As far as the east is from the west, so far hath he removed our transgressions from us."}],
+ salvation:[{ref:"2 Peter 3:9",text:"The Lord is not slack concerning his promise, as some men count slackness; but is longsuffering to us-ward, not willing that any should perish, but that all should come to repentance."},{ref:"Romans 10:9",text:"That if thou shalt confess with thy mouth the Lord Jesus, and shalt believe in thine heart that God hath raised him from the dead, thou shalt be saved."},{ref:"John 3:16",text:"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."}],
+ humility:[{ref:"James 4:10",text:"Humble yourselves in the sight of the Lord, and he shall lift you up."},{ref:"Micah 6:8",text:"He hath shewed thee, O man, what is good; and what doth the LORD require of thee, but to do justly, and to love mercy, and to walk humbly with thy God?"},{ref:"Philippians 2:3",text:"Let nothing be done through strife or vainglory; but in lowliness of mind let each esteem other better than themselves."}],
+ wisdom:[{ref:"James 1:5",text:"If any of you lack wisdom, let him ask of God, that giveth to all men liberally, and upbraideth not; and it shall be given him."},{ref:"Proverbs 3:5–6",text:"Trust in the LORD with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths."},{ref:"Proverbs 2:6",text:"For the LORD giveth wisdom: out of his mouth cometh knowledge and understanding."}],
+ knowledge:[{ref:"Colossians 1:9",text:"For this cause we also, since the day we heard it, do not cease to pray for you, and to desire that ye might be filled with the knowledge of his will in all wisdom and spiritual understanding."},{ref:"Philippians 1:9",text:"And this I pray, that your love may abound yet more and more in knowledge and in all judgment."},{ref:"Proverbs 1:7",text:"The fear of the LORD is the beginning of knowledge: but fools despise wisdom and instruction."}],
+ hope:[{ref:"Romans 15:13",text:"Now the God of hope fill you with all joy and peace in believing, that ye may abound in hope, through the power of the Holy Ghost."},{ref:"Jeremiah 29:11",text:"For I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil, to give you an expected end."},{ref:"Lamentations 3:22–23",text:"It is of the LORD's mercies that we are not consumed, because his compassions fail not. They are new every morning: great is thy faithfulness."}],
+ peace:[{ref:"Philippians 4:7",text:"And the peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus."},{ref:"John 14:27",text:"Peace I leave with you, my peace I give unto you: not as the world giveth, give I unto you. Let not your heart be troubled, neither let it be afraid."},{ref:"Isaiah 26:3",text:"Thou wilt keep him in perfect peace, whose mind is stayed on thee: because he trusteth in thee."}],
+ comfort:[{ref:"2 Corinthians 1:3–4",text:"Blessed be God, even the Father of our Lord Jesus Christ, the Father of mercies, and the God of all comfort; Who comforteth us in all our tribulation, that we may be able to comfort them which are in any trouble, by the comfort wherewith we ourselves are comforted of God."},{ref:"Psalm 34:18",text:"The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit."},{ref:"Matthew 5:4",text:"Blessed are they that mourn: for they shall be comforted."}],
+ purpose:[{ref:"Ephesians 2:10",text:"For we are his workmanship, created in Christ Jesus unto good works, which God hath before ordained that we should walk in them."},{ref:"Romans 8:28",text:"And we know that all things work together for good to them that love God, to them who are the called according to his purpose."},{ref:"Proverbs 19:21",text:"There are many devices in a man's heart; nevertheless the counsel of the LORD, that shall stand."}],
+ confidence:[{ref:"Proverbs 3:26",text:"For the LORD shall be thy confidence, and shall keep thy foot from being taken."},{ref:"Hebrews 10:35",text:"Cast not away therefore your confidence, which hath great recompence of reward."},{ref:"1 John 5:14",text:"And this is the confidence that we have in him, that, if we ask any thing according to his will, he heareth us."}],
+ deliverance:[{ref:"Psalm 34:17",text:"The righteous cry, and the LORD heareth, and delivereth them out of all their troubles."},{ref:"Psalm 50:15",text:"And call upon me in the day of trouble: I will deliver thee, and thou shalt glorify me."},{ref:"2 Timothy 4:18",text:"And the Lord shall deliver me from every evil work, and will preserve me unto his heavenly kingdom: to whom be glory for ever and ever. Amen."}],
+ rebuke:[{ref:"Zechariah 3:2",text:"And the LORD said unto Satan, The LORD rebuke thee, O Satan; even the LORD that hath chosen Jerusalem rebuke thee: is not this a brand plucked out of the fire?"},{ref:"Jude 1:9",text:"Yet Michael the archangel, when contending with the devil he disputed about the body of Moses, durst not bring against him a railing accusation, but said, The Lord rebuke thee."},{ref:"Revelation 3:19",text:"As many as I love, I rebuke and chasten: be zealous therefore, and repent."}],
+ repentance:[{ref:"2 Chronicles 7:14",text:"If my people, which are called by my name, shall humble themselves, and pray, and seek my face, and turn from their wicked ways; then will I hear from heaven, and will forgive their sin, and will heal their land."},{ref:"Acts 3:19",text:"Repent ye therefore, and be converted, that your sins may be blotted out, when the times of refreshing shall come from the presence of the Lord."},{ref:"Romans 2:4",text:"Or despisest thou the riches of his goodness and forbearance and longsuffering; not knowing that the goodness of God leadeth thee to repentance?"}],
+ mercy:[{ref:"Psalm 103:8",text:"The LORD is merciful and gracious, slow to anger, and plenteous in mercy."},{ref:"Ephesians 2:4–5",text:"But God, who is rich in mercy, for his great love wherewith he loved us, Even when we were dead in sins, hath quickened us together with Christ, (by grace ye are saved;)"},{ref:"Luke 6:36",text:"Be ye therefore merciful, as your Father also is merciful."}],
+ glory:[{ref:"Matthew 5:16",text:"Let your light so shine before men, that they may see your good works, and glorify your Father which is in heaven."},{ref:"1 Corinthians 10:31",text:"Whether therefore ye eat, or drink, or whatsoever ye do, do all to the glory of God."},{ref:"2 Thessalonians 1:12",text:"That the name of our Lord Jesus Christ may be glorified in you, and ye in him, according to the grace of our God and the Lord Jesus Christ."}],
+ will:[{ref:"Romans 12:2",text:"And be not conformed to this world: but be ye transformed by the renewing of your mind, that ye may prove what is that good, and acceptable, and perfect, will of God."},{ref:"Psalm 143:10",text:"Teach me to do thy will; for thou art my God: thy spirit is good; lead me into the land of uprightness."},{ref:"Matthew 6:10",text:"Thy kingdom come. Thy will be done in earth, as it is in heaven."}]
+};
+const DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const DAYS_FULL=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+let PL={people:[],scripture:null};
+{const s=store.get("plist",null); if(s){PL.people=s.people||[];PL.scripture=s.scripture||null}}
+let plRef=null, plStatus="";
+let listView=store.get("listView","today");
+let selDay=new Date().getDay();
+let draft=null, delArm=false, openCat=null, resetArm=null;
+
+const scr=c=>(PL.scripture&&PL.scripture[c])||DEFAULT_SCRIPTURE[c];
+function ensureScr(c){PL.scripture=PL.scripture||{};if(!PL.scripture[c])PL.scripture[c]=JSON.parse(JSON.stringify(DEFAULT_SCRIPTURE[c]));return PL.scripture[c]}
+const toggle=(a,v)=>{const i=a.indexOf(v);i>=0?a.splice(i,1):a.push(v)};
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const weekDate=i=>{const n=new Date();n.setDate(n.getDate()-n.getDay()+i);return ymd(n)};
+const niceDate=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"})};
+const forDay=d=>PL.people.filter(p=>p.once?p.once===weekDate(d):p.days.includes(d)).sort((a,b)=>a.name.localeCompare(b.name));
+const typesOf=p=>p.types.map(t=>CATS.find(c=>c.id===t)).filter(Boolean);
+const daysLabel=p=>p.once?"One time · "+niceDate(p.once)+(p.once<ymd(new Date())?" (past)":""):p.days.length===7?"Every day":!p.days.length?"No day set":p.days.slice().sort().map(d=>DAYS[d]).join(" · ");
+const initial=s=>(s.trim()[0]||"?").toUpperCase();
+
+/* Saving: your Claude account when available, this device otherwise */
+let saving=false, pendingSave=false;
+function plSave(){store.set("plist",PL); if(plRef){pendingSave=true; if(!saving) flushSave();}}
+async function flushSave(){
+  saving=true; let retried=false;
+  while(pendingSave && plRef){
+    pendingSave=false;
+    try{await plRef.set({people:PL.people,scripture:PL.scripture||{}})}
+    catch(e){
+      if(e&&e.code==="unavailable"&&!retried){retried=true;pendingSave=true;await new Promise(r=>setTimeout(r,700+Math.random()*800));continue}
+      plRef=null; plStatus="Couldn't save to your account. Changes are kept on this device."; rerenderList(); break;
+    }
+  }
+  saving=false;
+}
+function rerenderList(){ const h=curTab; if((h==="list"||h==="home") && !current) route(); }
+(async()=>{
+  try{
+    if(!window.claude||!window.claude.use) return;
+    const [db,user]=await Promise.all([window.claude.use("db"),window.claude.use("user")]);
+    if(!db||!user) return;
+    const uid=await user.id(); if(!uid) return;
+    const ref=db.doc("data/users/"+uid+"/prayerlist");
+    let confirmed=false;
+    const timer=setTimeout(()=>{if(!confirmed){plStatus="Can't reach your saved list yet. Showing what's on this device.";rerenderList()}},10000);
+    ref.onSnapshot(snap=>{
+      if(snap.metadata.hasPendingWrites) return;
+      plRef=ref;
+      if(snap.exists){const d=snap.data();PL.people=JSON.parse(JSON.stringify(d.people||[]));PL.scripture=d.scripture&&Object.keys(d.scripture).length?JSON.parse(JSON.stringify(d.scripture)):null;store.set("plist",PL)}
+      else if(!snap.metadata.fromCache && !confirmed && (PL.people.length||PL.scripture)) plSave();
+      if(!snap.metadata.fromCache){confirmed=true;clearTimeout(timer);plStatus=""}
+      rerenderList();
+    },()=>{clearTimeout(timer);plRef=null;plStatus="";rerenderList()});
+  }catch(e){}
+})();
+
+/* ---------- Views ---------- */
+function viewPrayers(){
+  const tags=["All","Saved","Scripture","Historic","Morning","Evening","Confession","Thanks","Short"];
+  let list = PRAYERS.filter(p=> prayerFilter==="All" || (prayerFilter==="Saved" ? favs.has("p:"+p.id) : p.tags.includes(prayerFilter)));
+  return `<h2 class="sec">Prayers of the Church</h2>
+  <p class="lede">Prayers from Scripture and the saints. Choose one and pray it slowly.</p>
+  <div class="chips">${tags.map(t=>`<button class="chip" data-filter="${t}" aria-pressed="${t===prayerFilter}">${t==="Saved"?"★ Saved":t}</button>`).join("")}</div>
+  <div class="list">${list.length?list.map(p=>`
+    <button class="item" data-open="p:${p.id}">
+      <span class="body"><span class="t">${esc(p.title)}</span><span class="s">${esc(p.src)}</span></span>
+      ${favs.has("p:"+p.id)?'<span class="star">★</span>':""}<span class="chev">›</span>
+    </button>`).join(""):`<p class="lede" style="padding:16px 0">Nothing saved yet. Tap ☆ while reading a prayer to keep it here.</p>`}
+  </div>`;
+}
+
+function todaysPsalms(){
+  const d=new Date().getDate();
+  if(d===31) return [119];
+  return [d,d+30,d+60,d+90,d+120];
+}
+function psalmBtn(n,cls="pill"){
+  const has=PSALMS.some(p=>p.n===n);
+  return has?`<button class="${cls}" data-open="s:${n}">Psalm ${n}</button>`
+            :`<a class="${cls} ext" href="${bgLink("Psalm "+n,"KJV")}" target="_blank" rel="noopener">Psalm ${n}</a>`;
+}
+function viewPsalms(){
+  const groups={};
+  PSALMS.forEach(p=>(groups[p.tag]=groups[p.tag]||[]).push(p));
+  const order=["Trust","Praise","Confession","Protection","Morning","Wisdom"];
+  return `<h2 class="sec">Praying the Psalms</h2>
+  <p class="lede">Read a psalm whole, or pray it verse by verse in your own words.</p>
+  <div class="today">
+    <div class="label" style="margin:0">Today's five · day ${new Date().getDate()}</div>
+    <div class="row">${todaysPsalms().map(n=>psalmBtn(n)).join("")}</div>
+  </div>
+  ${order.filter(g=>groups[g]).map(g=>`
+    <div class="label">${g}</div>
+    <div class="list">${groups[g].map(p=>`
+      <button class="item" data-open="s:${p.n}">
+        <span class="num">${p.n}</span>
+        <span class="body"><span class="t">${esc(p.t)}</span><span class="s">${p.v.length} verses</span></span>
+        ${favs.has("s:"+p.n)?'<span class="star">★</span>':""}<span class="chev">›</span>
+      </button>`).join("")}</div>`).join("")}
+  <div class="label">All 150</div>
+  <p class="lede" style="margin-bottom:10px;font-size:14px">Red psalms open here. The rest open in the KJV at Bible Gateway.</p>
+  <div class="grid">${Array.from({length:150},(_,i)=>{const n=i+1;return PSALMS.some(p=>p.n===n)?`<button data-open="s:${n}">${n}</button>`:`<a href="${bgLink("Psalm "+n,"KJV")}" target="_blank" rel="noopener">${n}</a>`}).join("")}</div>`;
+}
+
+function viewOurFather(){
+  return `<h2 class="sec">The Lord's Prayer</h2>
+  <p class="lede">"After this manner therefore pray ye." Recite it, or use each line as a guide for your own prayer.</p>
+  <div class="ourfather">
+    Our Father which art in heaven, Hallowed be thy name. Thy kingdom come. Thy will be done in earth, as it is in heaven. Give us this day our daily bread. And forgive us our debts, as we forgive our debtors. And lead us not into temptation, but deliver us from evil: For thine is the kingdom, and the power, and the glory, for ever. Amen.
+    <div class="ref">Matthew 6:9–13 · KJV</div>
+  </div>
+  <div class="actions">
+    <button class="btn primary" data-open="o:pray">Pray through it, line by line</button>
+    <button class="btn" data-open="o:read">Recite</button>
+  </div>
+  <div class="label">The eight movements</div>
+  <div class="list">${OUR_FATHER.map((s,i)=>`
+    <button class="item" data-open="o:pray:${i}">
+      <span class="num">${i+1}</span>
+      <span class="body"><span class="t">${esc(s.line)}</span><span class="s">${s.theme}</span></span><span class="chev">›</span>
+    </button>`).join("")}</div>`;
+}
+
+function viewPaul(){
+  const name=store.get("name","");
+  return `<h2 class="sec">The Prayers of Paul</h2>
+  <p class="lede">Paul's prayers for the churches. Pray them for yourself, or over someone by name.</p>
+  <div class="namebox">
+    <label for="prayfor">Praying for (optional)</label>
+    <input id="prayfor" type="text" placeholder="A name, a family, a church" value="${esc(name)}" autocomplete="off">
+  </div>
+  <div class="list">${PAUL.map(p=>`
+    <button class="item" data-open="a:${p.id}">
+      <span class="body"><span class="t">${esc(p.t)}</span><span class="s">${p.ref} · ${esc(p.ask)}</span></span>
+      ${favs.has("a:"+p.id)?'<span class="star">★</span>':""}<span class="chev">›</span>
+    </button>`).join("")}</div>`;
+}
+
+function personRow(p,showDays){
+  const ts=typesOf(p);
+  return `<button class="item" data-view="${p.id}">
+    <span class="avatar${p.kind==="group"?" grp":""}">${esc(initial(p.name))}</span>
+    <span class="body"><span class="t">${esc(p.name)}</span>
+      <span class="s">${kindLabel(p)}${showDays?" · "+daysLabel(p):""}</span>
+      ${ts.length?`<span class="tags">${ts.map(c=>`<span class="tag">${c.name}</span>`).join("")}</span>`:""}
+    </span><span class="chev">›</span></button>`;
+}
+function listToday(){
+  if(!PL.people.length) return `<div class="empty"><div class="big">Start your prayer list</div>
+    <p>Add the people and groups you pray for. Choose the days you'll pray for each one and what you're asking God for.</p>
+    <button class="btn primary" data-edit="new">Add a name or group</button></div>`;
+  const today=new Date().getDay(), ppl=forDay(selDay);
+  return `<div class="days">${DAYS.map((d,i)=>`<button class="day${i===today?" today":""}" data-day="${i}" aria-pressed="${i===selDay}"><span>${d}</span><b>${forDay(i).length}</b></button>`).join("")}</div>
+  <div class="dayhead"><div><div class="label" style="margin:0">${DAYS_FULL[selDay]}${selDay===today?" · today":""}</div>
+    <div class="count">${ppl.length} to pray for</div></div>
+    ${ppl.length?`<button class="btn primary" data-praydays="${selDay}">Pray now</button>`:""}</div>
+  ${ppl.length?`<div class="list">${ppl.map(p=>personRow(p,false)).join("")}</div>`:`<p class="lede">No one is set for ${DAYS_FULL[selDay]} yet.</p>`}`;
+}
+function listPeople(){
+  if(!PL.people.length) return listToday();
+  const sorted=PL.people.slice().sort((a,b)=>a.name.localeCompare(b.name));
+  const sect=(k,label)=>{const g=k==="once"?sorted.filter(p=>p.once).sort((a,b)=>b.once.localeCompare(a.once)):sorted.filter(p=>!p.once&&(k==="group")===(p.kind==="group"));return g.length?`<div class="label">${label} · ${g.length}</div><div class="list">${g.map(p=>personRow(p,true)).join("")}</div>`:""};
+  return sect("person","People")+sect("group","Groups")+sect("once","One-time prayers");
+}
+function listScripture(){
+  return `<p class="lede" style="font-size:15px">Choose the verses you want to pray for each need. When you pray through your list, a different verse comes up each day.</p>
+  <div class="cats">${CATS.map(c=>{const vs=scr(c.id),open=openCat===c.id;
+    return `<div class="cat"><button class="cathead" data-cat="${c.id}" aria-expanded="${open}">
+      <span class="t">${c.name}</span><span class="chev">${open?"−":"+"}</span>
+      <span class="s">${vs.length} verse${vs.length===1?"":"s"}${vs.length?" · "+esc(vs.map(v=>v.ref).join(", ")):""}</span></button>
+    ${open?`<div class="catbody">
+      ${vs.map((v,i)=>`<div class="verse"><div class="vref">${esc(v.ref)}</div>${v.text?`<div class="vtext">${esc(v.text)}</div>`:""}<button class="rm" data-rmv="${c.id}:${i}">Remove</button></div>`).join("")||`<p class="lede" style="margin:0">No verses yet. Add one below.</p>`}
+      <div class="addv">
+        <label for="vref-${c.id}">Reference</label><input id="vref-${c.id}" type="text" placeholder="e.g. Isaiah 40:29" autocomplete="off">
+        <label for="vtext-${c.id}">Verse text</label><textarea id="vtext-${c.id}" rows="3" placeholder="Type or paste the verse in your favorite translation"></textarea>
+        <div class="actions" style="margin-top:6px">
+          <button class="btn primary" data-addv="${c.id}">Add verse</button>
+          <a class="btn" id="vlook-${c.id}" href="https://www.biblegateway.com/" target="_blank" rel="noopener">Look it up ↗</a>
+          <button class="btn ghost" data-reset="${c.id}">${resetArm===c.id?"Tap again to reset":"Reset to suggested"}</button>
+        </div></div></div>`:""}</div>`}).join("")}</div>`;
+}
+let exToday=store.get("exToday",false), exFmt=store.get("exFmt","simple"), exVerses=store.get("exVerses",true), dl=null;
+const EXF={simple:{label:"Simple list",ext:"txt",hint:"Each name once, with their requests and what you are praying for. No verses."},
+  txt:{label:"Readable list",ext:"txt",hint:"A plain-text prayer list organized by day. Good for printing or keeping in your notes."},
+  csv:{label:"Spreadsheet",ext:"csv",hint:"One row per name. Opens in Excel, Google Sheets, or Numbers."},
+  json:{label:"Backup",ext:"json",hint:"Everything on your list and your scripture choices, in a file you can keep as a backup."}};
+const stamp=()=>new Date().toISOString().slice(0,10);
+function exportData(fmt){
+  const people=PL.people.slice().sort((a,b)=>a.name.localeCompare(b.name));
+  if(fmt==="simple"){
+    const now=new Date(), list=exToday?forDay(now.getDay()):people;
+    const out=[exToday?"MY PRAYER LIST · TODAY":"MY PRAYER LIST",now.toLocaleDateString(undefined,exToday?{weekday:"long",year:"numeric",month:"long",day:"numeric"}:{year:"numeric",month:"long",day:"numeric"}),""];
+    if(!list.length) out.push("No one is set for "+DAYS_FULL[now.getDay()]+".");
+    list.forEach(p=>{
+      out.push(p.name);
+      out.push("  Requests: "+(p.note||"None noted"));
+      out.push("  Praying for: "+(typesOf(p).map(c=>c.name).join(", ")||"As the Spirit leads"));
+      out.push("");
+    });
+    return out.join("\n").trim()+"\n";
+  }
+  if(fmt==="json") return JSON.stringify({app:"Prayer Book",exported:new Date().toISOString(),people:PL.people,scripture:PL.scripture||{}},null,2);
+  if(fmt==="csv"){
+    const q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+    return ["Name,Type,Days,Praying for,Requests"].concat(people.map(p=>[p.name,kindLabel(p),daysLabel(p),typesOf(p).map(c=>c.name).join("; "),p.note||""].map(q).join(","))).join("\r\n");
+  }
+  const out=["MY PRAYER LIST","Exported "+new Date().toLocaleDateString(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"}),""];
+  const block=p=>{
+    out.push("  "+p.name+"  ("+kindLabel(p)+")");
+    if(p.note) out.push("    Requests: "+p.note);
+    const ts=typesOf(p);
+    if(!ts.length) out.push("    Pray as the Spirit leads.");
+    ts.forEach(c=>{
+      if(!exVerses){return}
+      out.push("    "+c.name.toUpperCase());
+      out.push("      Pray: "+askFor(c,p));
+      scr(c.id).forEach(v=>out.push("      "+v.ref+(v.text?": "+v.text:"")));
+    });
+    if(!exVerses&&ts.length) out.push("    Praying for: "+ts.map(c=>c.name).join(", "));
+    out.push("");
+  };
+  DAYS_FULL.forEach((d,i)=>{const g=people.filter(p=>!p.once&&p.days.includes(i));if(!g.length)return;out.push("— "+d.toUpperCase()+" —","");g.forEach(block)});
+  const none=people.filter(p=>!p.once&&!p.days.length);
+  if(none.length){out.push("— NO DAY SET —","");none.forEach(block)}
+  const once=people.filter(p=>p.once).sort((a,b)=>a.once.localeCompare(b.once));
+  once.forEach(p=>{out.push("— ONE TIME · "+niceDate(p.once).toUpperCase()+" —","");block(p)});
+  return out.join("\n");
+}
+function listExport(){return listExportMain()+listRestore()}
+function listExportMain(){
+  if(!PL.people.length) return `<div class="empty"><div class="big">Nothing to export yet</div><p>Add names to your prayer list first. Then come back here to save or copy it.</p><button class="btn primary" data-edit="new">Add a name or group</button></div>`;
+  const f=EXF[exFmt];
+  return `<div class="label" style="margin-top:0">Format</div>
+  <div class="mode" role="group" aria-label="Export format" style="margin-top:0">${Object.entries(EXF).map(([k,v])=>`<button data-exf="${k}" aria-pressed="${exFmt===k}">${v.label}</button>`).join("")}</div>
+  <p class="lede" style="margin:10px 0 0;font-size:15px">${f.hint}</p>
+  ${exFmt==="simple"?`<label class="check" for="ext"><input type="checkbox" id="ext" ${exToday?"checked":""}> Today only (${DAYS_FULL[new Date().getDay()]})</label>`:""}
+  ${exFmt==="txt"?`<label class="check" for="exv"><input type="checkbox" id="exv" ${exVerses?"checked":""}> Include prayers and verses for each need</label>`:""}
+  <div class="label">Preview · ${exName()}</div>
+  <textarea id="expreview" class="preview" readonly rows="14" aria-label="Export preview">${esc(exportData(exFmt))}</textarea>
+  <div class="actions">${dl?`<button class="btn primary" data-exsave>Save file</button>`:""}<button class="btn${dl?"":" primary"}" data-excopy>Copy text</button></div>
+  <p class="savenote" id="exmsg" style="margin-top:10px;text-align:left" hidden></p>`;
+}
+const exName=()=>(exFmt==="simple"?"prayer-names-":"prayer-list-")+stamp()+"."+EXF[exFmt].ext;
+let restoreData=null, restoreArm=false, restoreErr="", restoreDone="";
+function parseBackup(txt){
+  let d; try{d=JSON.parse(txt)}catch(e){throw "That isn't a backup file. Choose the .json file saved with the Backup format."}
+  if(!d||!Array.isArray(d.people)) throw "That file doesn't contain a prayer list.";
+  const people=d.people.filter(p=>p&&typeof p.name==="string"&&p.name.trim()).map(p=>{
+    const o={id:String(p.id||("p"+Math.random().toString(36).slice(2,10))),kind:["male","female","group","person"].includes(p.kind)?p.kind:"person",
+      name:p.name.trim().slice(0,200),days:Array.isArray(p.days)?[...new Set(p.days.filter(x=>Number.isInteger(x)&&x>=0&&x<7))]:[],
+      types:Array.isArray(p.types)?p.types.filter(t=>CATS.some(c=>c.id===t)):[],note:typeof p.note==="string"?p.note.slice(0,2000):""};
+    if(typeof p.once==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(p.once)){o.once=p.once;o.days=[]}
+    return o;});
+  const scripture={};
+  if(d.scripture&&typeof d.scripture==="object") CATS.forEach(c=>{const a=d.scripture[c.id];
+    if(Array.isArray(a)) scripture[c.id]=a.filter(v=>v&&typeof v.ref==="string").map(v=>({ref:v.ref.slice(0,120),text:typeof v.text==="string"?v.text.slice(0,2000):""}))});
+  return {people,scripture,exported:typeof d.exported==="string"?d.exported:""};
+}
+function loadBackup(txt){
+  restoreDone=""; restoreArm=false;
+  try{restoreData=parseBackup(txt);restoreErr=""}catch(e){restoreData=null;restoreErr=typeof e==="string"?e:"That file couldn't be read."}
+  route();
+}
+function listRestore(){
+  const r=restoreData;
+  const newCount=r?r.people.filter(p=>!PL.people.some(x=>x.id===p.id)).length:0;
+  const when=r&&r.exported?new Date(r.exported).toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"}):"";
+  return `<div class="label" style="margin-top:34px">Restore from a backup</div>
+  <p class="lede" style="font-size:15px;margin:0">Choose a Backup (.json) file you saved from this page, or paste its contents below.</p>
+  <div class="form" style="margin-top:10px">
+    <label for="rfile">Backup file</label><input type="file" id="rfile" accept=".json,application/json,text/plain">
+    <label for="rpaste">Or paste the backup text</label><textarea id="rpaste" rows="3" placeholder='{"app":"Prayer Book", ...'></textarea>
+    <div class="actions" style="margin-top:4px"><button class="btn" data-rcheck>Check pasted text</button></div>
+  </div>
+  ${restoreErr?`<p class="err" style="margin-top:10px">${esc(restoreErr)}</p>`:""}
+  ${restoreDone?`<p class="savenote" style="text-align:left;margin-top:10px;color:var(--ink)">${esc(restoreDone)}</p>`:""}
+  ${r?`<div class="empty" style="margin-top:14px"><div class="big">${r.people.length} name${r.people.length===1?"":"s"} in this backup</div>
+    <p>${when?"Saved "+when+". ":""}${Object.keys(r.scripture).length} prayer type${Object.keys(r.scripture).length===1?"":"s"} with your own verses.
+    ${PL.people.length?` Adding keeps your current list and brings in the ${newCount} name${newCount===1?"":"s"} you don't have. Replacing swaps your whole list and verses for the backup.`:""}</p>
+    <div class="actions">${PL.people.length?`<button class="btn primary" data-rmerge>Add to my list</button><button class="btn danger" data-rreplace>${restoreArm?"Tap again to replace":"Replace my list"}</button>`:`<button class="btn primary" data-rreplace data-armed>Restore this backup</button>`}<button class="btn ghost" data-rcancel>Cancel</button></div></div>`:""}`;
+}
+function exMsg(t){const m=$("#exmsg");if(m){m.textContent=t;m.hidden=false}}
+(async()=>{try{if(window.claude&&window.claude.use){dl=await window.claude.use("downloads");rerenderList()}}catch(e){}})();
+
+function viewList(){
+  const seg=`<div class="mode seg" role="group" aria-label="Prayer list view">${[["today","By day"],["people","Names"],["scripture","Scripture"],["export","Export"]].map(([k,l])=>`<button data-lv="${k}" aria-pressed="${listView===k}">${l}</button>`).join("")}</div>`;
+  const addTop=(listView==="today"||listView==="people")&&PL.people.length?`<div class="actions" style="margin:0 0 18px"><button class="btn addbtn" style="margin:0;flex:1" data-edit="new">+ Add a name or group</button><button class="btn addbtn" style="margin:0;flex:1" data-edit="once">+ One-time prayer</button></div>`:"";
+  const body=listView==="people"?listPeople():listView==="scripture"?listScripture():listView==="export"?listExport():listToday();
+  const note=plStatus||(plRef?"Saved to your Claude account.":"Saved on this device.");
+  return `${addTop}<h2 class="sec">My Prayer List</h2><p class="lede">The people and groups you carry, the days you pray for them, and what you're asking God for.</p>${seg}${body}<p class="savenote">${esc(note)}</p>`;
+}
+
+function viewHome(){
+  const now=new Date(), n=forDay(now.getDay()).length;
+  const pod=PRAYERS[dayOfYear()%PRAYERS.length];
+  const cards=[
+    ["list","My Prayer List","The people and groups you pray for, by day, with scripture for each need.",PL.people.length?`Today: ${n} to pray for`:"Start your prayer list"],
+    ["prayers","Prayers of the Church",`${PRAYERS.length} prayers from Scripture and the saints.`,"Prayer of the day: "+pod.title],
+    ["psalms","Praying the Psalms","Read a psalm whole, or pray it verse by verse.","Today: Psalms "+todaysPsalms().join(", ")],
+    ["ourfather","The Lord's Prayer","Jesus' model prayer, prayed line by line through its eight movements.","Matthew 6:9–13"],
+    ["paul","The Prayers of Paul",`${PAUL.length} of Paul's prayers for the churches, to pray over someone by name.`,"Ephesians, Philippians, Colossians and more"]
+  ];
+  return `<div class="hero"><img src="icons/icon-192.png" alt="" width="88" height="88"><h1>Prayer Book</h1>
+    <p>${now.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})}</p></div>
+  ${cards.map(([k,t,d,e])=>`<a class="pick" href="#${k}"><b>${t}</b><span>${d}</span><em>${esc(e)}</em></a>`).join("")}`;
+}
+const VIEWS={home:viewHome,prayers:viewPrayers,psalms:viewPsalms,ourfather:viewOurFather,paul:viewPaul,list:viewList};
+function route(){
+  let tab=curTab;
+  if(!VIEWS[tab]) tab=curTab="home";
+  document.body.dataset.page=tab;
+  $("#view").innerHTML=VIEWS[tab]();
+  document.querySelectorAll("nav.tabs a").forEach(a=>a.setAttribute("aria-current",a.dataset.tab===tab?"page":"false"));
+  const nm=$("#prayfor"); if(nm) nm.addEventListener("input",e=>store.set("name",e.target.value.trim()));
+}
+window.addEventListener("hashchange",()=>{const h=(location.hash||"#home").slice(1);if(VIEWS[h]&&h!==curTab){curTab=h;route();window.scrollTo(0,0)}});
+/* Switch sections inside the page instead of following the link, so the viewer never navigates away */
+document.addEventListener("click",e=>{
+  const a=e.target.closest('a[href^="#"]'); if(!a) return;
+  const h=a.getAttribute("href").slice(1); if(!VIEWS[h]) return;
+  e.preventDefault();
+  if(current){$("#reader").hidden=true;document.body.style.overflow="";current=null;draft=null}
+  curTab=h; route(); window.scrollTo(0,0);
+},true);
+
+/* ---------- Reader ---------- */
+function versesHTML(v,start=1){
+  return `<p class="first">${v.map((t,i)=>`<sup>${start+i}</sup>${esc(t)}`).join(" ")}</p>`;
+}
+function versionLinks(q){
+  return `<div class="versions">Read in ${VERSIONS.map(x=>`<a href="${bgLink(q,x)}" target="_blank" rel="noopener">${x}</a>`).join("")}</div>`;
+}
+function modeSwitch(){
+  return `<div class="mode" role="group" aria-label="Reading mode">
+    <button data-mode="read" aria-pressed="${mode==="read"}">Read it whole</button>
+    <button data-mode="pray" aria-pressed="${mode==="pray"}">Pray verse by verse</button></div>`;
+}
+function stepper(total,inner){
+  return `<div class="step">
+    <div class="prog">${stepIdx+1} of ${total}</div>
+    <div class="bar"><i style="width:${((stepIdx+1)/total)*100}%"></i></div>
+    ${inner}
+    <div class="stepnav">
+      <button class="btn" data-step="-1" ${stepIdx===0?"disabled style='opacity:.4'":""}>‹ Previous</button>
+      <button class="btn primary" data-step="1">${stepIdx===total-1?"Amen":"Next ›"}</button>
+    </div></div>`;
+}
+function amen(){
+  return `<div class="amen"><div class="a">Amen.</div>
+  <p class="rubric">"The effectual fervent prayer of a righteous man availeth much." James 5:16</p>
+  <div class="actions" style="justify-content:center"><button class="btn" data-again>Pray again</button><button class="btn primary" data-close>Done</button></div></div>`;
+}
+
+function renderReader(){
+  const [kind,key,extra]=current;
+  const fav=$("#fav"); fav.hidden=["o","e","d","v"].includes(kind);
+  if(kind==="v"){$("#rbody").innerHTML=renderPerson(key);return}
+  fav.textContent=favs.has(kind+":"+key)?"★":"☆";
+  if(kind==="e"){$("#rbody").innerHTML=renderEditor();return}
+  if(kind==="d"){$("#rbody").innerHTML=renderDayPrayer(+key);return}
+  let h="";
+  if(kind==="p"){
+    const p=PRAYERS.find(x=>x.id===key);
+    h=`<div class="src">${esc(p.src)}</div><h1>${esc(p.title)}</h1>
+      ${p.rub?`<p class="rubric">${esc(p.rub)}</p>`:""}
+      <div class="text">${p.text.map((t,i)=>`<p class="${i?"":"first"}">${esc(t)}</p>`).join("")}</div>
+      ${p.after?`<p class="rubric">${esc(p.after)}</p>`:""}
+      <p class="rubric">Here pause in silence, and add your own petitions.</p>`;
+  }
+  if(kind==="s"||kind==="a"){
+    const isPs=kind==="s";
+    const item=isPs?PSALMS.find(x=>x.n===+key):PAUL.find(x=>x.id===key);
+    const ref=isPs?"Psalm "+item.n:item.ref;
+    const start=isPs?1:item.start;
+    const name=isPs?"":store.get("name","");
+    const head=`<div class="src">${esc(isPs?item.tag:item.ask)} · KJV</div><h1>${isPs?"Psalm "+item.n:esc(item.t)}</h1>
+      <p class="rubric" style="margin-top:6px">${isPs?esc(item.t):esc(item.ref)}${name?` · prayed for ${esc(name)}`:""}</p>
+      ${item.v.length>1?modeSwitch():""}`;
+    if(mode==="pray" && item.v.length>1){
+      if(stepIdx>=item.v.length){h=head+amen();}
+      else h=head+stepper(item.v.length,`
+        <div class="theme">Verse ${start+stepIdx}</div>
+        <div class="big">${esc(item.v[stepIdx])}</div>
+        <div class="guide">${isPs
+          ?"<b>Pause.</b> Pray this verse back to God in your own words. Thank him, confess, or ask, as the verse leads you."
+          :`<b>Pause.</b> Pray this for ${name?esc(name):"yourself or someone on your heart"}, putting the name where Paul says “you.”`}</div>`);
+    } else {
+      h=head+`<div class="text">${versesHTML(item.v,start)}</div>
+        <p class="rubric">${isPs?"Glory be to the Father, and to the Son, and to the Holy Ghost.":"Here name those you are praying for."}</p>
+        ${versionLinks(ref)}`;
+    }
+  }
+  if(kind==="o"){
+    if(key==="read"){
+      h=`<div class="src">Matthew 6:9–13 · KJV</div><h1>The Lord's Prayer</h1>
+      <div class="text"><p class="first">${OUR_FATHER.map(s=>esc(s.line)).join(" ")}</p></div>
+      <div class="actions"><button class="btn primary" data-switch="pray">Pray through it, line by line</button></div>
+      ${versionLinks("Matthew 6:9-13")}`;
+    } else {
+      if(stepIdx>=OUR_FATHER.length){h=`<div class="src">The Model Prayer</div><h1>The Lord's Prayer</h1>`+amen();}
+      else{
+        const s=OUR_FATHER[stepIdx];
+        h=`<div class="src">The Model Prayer</div><h1>The Lord's Prayer</h1>`+stepper(OUR_FATHER.length,`
+          <div class="theme">${s.theme}</div>
+          <div class="big">${esc(s.line)}</div>
+          <div class="guide">${s.guide}<div style="margin-top:8px;font-size:.88em;color:var(--muted)">See ${s.ref}</div></div>`);
+      }
+    }
+  }
+  $("#rbody").innerHTML=h;
+}
+
+function openItem(code){
+  const parts=code.split(":");
+  current=[parts[0],parts[1]];
+  stepIdx=0;
+  if(parts[0]==="o"){ if(parts[2]!==undefined) stepIdx=+parts[2]; }
+  else mode="read";
+  showReader();
+}
+function showReader(){
+  renderReader();
+  $("#reader").hidden=false; $("#reader").scrollTop=0;
+  document.body.style.overflow="hidden";
+}
+function closeReader(){$("#reader").hidden=true;document.body.style.overflow="";current=null;draft=null;route()}
+
+/* ---------- Prayer list: editor and daily prayer ---------- */
+function openEditor(id){
+  const p=PL.people.find(x=>x.id===id);
+  draft=p?JSON.parse(JSON.stringify(p)):{id:"p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),kind:"person",name:"",days:listView==="today"&&id!=="once"?[selDay]:[],types:[],note:"",once:id==="once"?(listView==="today"?weekDate(selDay):ymd(new Date())):null};
+  delArm=false; current=["e",draft.id]; showReader();
+}
+function renderEditor(){
+  const d=draft, isNew=!PL.people.some(p=>p.id===d.id), grp=d.kind==="group";
+  return `<div class="src">${isNew?"New":"Edit"} · My Prayer List</div><h1>${isNew?"Add to your list":esc(d.name||"Untitled")}</h1>
+  <div class="form">
+    <div class="mode" role="group" aria-label="Male, female or group">${[["male","Male"],["female","Female"],["group","Group"]].map(([k,l])=>`<button data-kind="${k}" aria-pressed="${d.kind===k}">${l}</button>`).join("")}</div>
+    <label for="pname">${grp?"Group name":"Name"}</label>
+    <input id="pname" type="text" value="${esc(d.name)}" placeholder="${grp?"e.g. Our Sunday school class":"e.g. Pastor Mike"}" autocomplete="off">
+    <div class="flabel">When to pray</div>
+    <div class="mode" role="group" aria-label="Weekly or one time" style="margin-top:0">${[["weekly","Weekly"],["once","One time"]].map(([k,l])=>`<button data-sched="${k}" aria-pressed="${(k==="once")===!!d.once}">${l}</button>`).join("")}</div>
+    ${d.once?`<label for="ponce">Date</label><input id="ponce" type="date" value="${d.once}">`
+    :`<div class="flabel">Days to pray <button class="linkish" data-alldays>${d.days.length===7?"Clear days":"Every day"}</button></div>
+    <div class="chips" style="margin:0">${DAYS.map((x,i)=>`<button class="chip" data-tday="${i}" aria-pressed="${d.days.includes(i)}">${x}</button>`).join("")}</div>`}
+    <div class="flabel">What to pray for</div>
+    <div class="chips" style="margin:0">${CATS.map(c=>`<button class="chip" data-tcat="${c.id}" aria-pressed="${d.types.includes(c.id)}">${c.name}</button>`).join("")}</div>
+    <label for="pnote">Specific requests (optional)</label>
+    <textarea id="pnote" rows="3" placeholder="e.g. Surgery on the 18th, new job, wisdom with a decision">${esc(d.note||"")}</textarea>
+    <p class="err" id="perr" hidden></p>
+    <div class="actions"><button class="btn primary" data-savep>Save</button>
+      ${isNew?`<button class="btn" data-close>Cancel</button>`:`<button class="btn" data-view="${d.id}">Cancel</button><button class="btn danger" data-delp>${delArm?"Tap again to remove":"Remove from list"}</button>`}</div>
+  </div>`;
+}
+function renderPerson(id){
+  const p=PL.people.find(x=>x.id===id);
+  if(!p) return `<p class="lede" style="margin-top:16px">This name is no longer on your list.</p>`;
+  const ts=typesOf(p);
+  const ref=v=>v.text?esc(v.ref):`<a href="${bgLink(v.ref,"NKJV")}" target="_blank" rel="noopener">${esc(v.ref)} ↗</a>`;
+  return `<div class="src">${kindLabel(p)} · ${daysLabel(p)}</div><h1>${esc(p.name)}</h1>
+  ${p.note?`<p class="rubric">${esc(p.note)}</p>`:""}
+  <div class="actions" style="margin-top:14px"><button class="btn" data-edit="${p.id}">Edit details</button></div>
+  ${ts.length?ts.map(c=>{const vs=scr(c.id);return `<div class="ask"><div class="asklabel">${c.name}</div>
+    ${vs.map(v=>`<blockquote>${v.text?esc(v.text):""}<cite>${ref(v)}</cite></blockquote>`).join("")||`<p class="lede" style="margin:6px 0 0">No verses for this yet. Add some on the Scripture page.</p>`}
+    <div class="prayerbox"><div class="pl">✠ Pray</div><div class="pt">${esc(askFor(c,p))}</div></div></div>`}).join("")
+  :`<div class="empty" style="margin-top:22px"><p style="margin-top:0">You haven't chosen what to pray for yet.</p><button class="btn primary" data-edit="${p.id}">Choose what to pray for</button></div>`}
+  ${ts.length?`<div class="actions" style="margin-top:26px"><button class="btn" data-edit="${p.id}">Edit details</button></div>`:""}`;
+}
+const PRON={male:{they:"he",them:"him",their:"his",are:"is"},female:{they:"she",them:"her",their:"her",are:"is"}};
+const PRON_DEFAULT={they:"they",them:"them",their:"their",are:"are"};
+const askFor=(c,p)=>c.ask.replace(/\{(n|they|them|their|are)\}/g,(m,k)=>k==="n"?p.name:(PRON[p.kind]||PRON_DEFAULT)[k]);
+const kindLabel=p=>({male:"Male",female:"Female",group:"Group"})[p.kind]||"Person";
+const dayOfYear=()=>{const n=new Date();return Math.floor((n-new Date(n.getFullYear(),0,0))/864e5)};
+const hashStr=s=>[...s].reduce((a,c)=>a+c.charCodeAt(0),0);
+function renderDayPrayer(day){
+  const ppl=forDay(day);
+  const head=`<div class="src">${DAYS_FULL[day]}</div><h1>Praying for my list</h1>`;
+  if(!ppl.length) return head+`<p class="lede" style="margin-top:16px">No one is set for this day.</p>`;
+  if(stepIdx>=ppl.length) return head+amen();
+  const p=ppl[stepIdx], ts=typesOf(p), doy=dayOfYear();
+  const asks=ts.length?ts.map(c=>{const vs=scr(c.id);const v=vs.length?vs[(doy+hashStr(p.id))%vs.length]:null;
+    return `<div class="ask"><div class="asklabel">${c.name}</div>
+      ${v?`<blockquote>${v.text?esc(v.text):""}<cite>${v.text?esc(v.ref):`<a href="${bgLink(v.ref,"NKJV")}" target="_blank" rel="noopener">${esc(v.ref)} ↗</a>`}</cite></blockquote>`:""}
+      <div class="prayerbox"><div class="pl">✠ Pray</div><div class="pt">${esc(askFor(c,p))}</div></div></div>`}).join("")
+    :`<div class="prayerbox" style="margin-top:18px"><div class="pl">✠ Pray</div><div class="pt">Pray for ${esc(p.name)} as the Spirit leads you.</div></div>`;
+  return head+stepper(ppl.length,`<div class="theme">${kindLabel(p)}</div>
+    <div class="big">${esc(p.name)}</div>${p.note?`<p class="rubric" style="margin-top:4px">${esc(p.note)}</p>`:""}${asks}`);
+}
+
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-rcheck],[data-rcancel],[data-rmerge],[data-rreplace],[data-sched],[data-exf],[data-exsave],[data-excopy],[data-view],[data-lv],[data-day],[data-edit],[data-praydays],[data-tday],[data-tcat],[data-kind],[data-alldays],[data-savep],[data-delp],[data-cat],[data-addv],[data-rmv],[data-reset]");
+  if(!t) return; const ds=t.dataset;
+  if(ds.view){current=["v",ds.view];draft=null;showReader();return}
+  if(t.hasAttribute("data-rcheck")){const v=$("#rpaste").value.trim();if(!v){restoreErr="Paste the backup text first.";route();return}loadBackup(v);return}
+  if(t.hasAttribute("data-rcancel")){restoreData=null;restoreArm=false;restoreErr="";route();return}
+  if(t.hasAttribute("data-rmerge")&&restoreData){
+    const add=restoreData.people.filter(p=>!PL.people.some(x=>x.id===p.id));
+    PL.people=PL.people.concat(add);
+    const sc=restoreData.scripture;
+    if(Object.keys(sc).length){PL.scripture=PL.scripture||{};Object.keys(sc).forEach(k=>{if(!PL.scripture[k])PL.scripture[k]=sc[k]})}
+    plSave(); restoreData=null; restoreDone="Added "+add.length+" name"+(add.length===1?"":"s")+" to your list."; route(); return;
+  }
+  if(t.hasAttribute("data-rreplace")&&restoreData){
+    if(!restoreArm&&!t.hasAttribute("data-armed")){restoreArm=true;route();return}
+    PL.people=restoreData.people; PL.scripture=Object.keys(restoreData.scripture).length?restoreData.scripture:null;
+    const n=PL.people.length; plSave(); restoreData=null; restoreArm=false; restoreDone="Restored "+n+" name"+(n===1?"":"s")+" from your backup."; route(); return;
+  }
+  if(ds.exf){exFmt=ds.exf;store.set("exFmt",exFmt);route();return}
+  if(t.hasAttribute("data-exsave")){
+    if(!dl) return;
+    dl.save({filename:exName(),data:exportData(exFmt)})
+      .then(()=>exMsg("Saved."))
+      .catch(err=>{const c=err&&err.code;
+        if(c==="declined") return;
+        if(c==="rate_limited") exMsg("A save is already waiting for you to confirm.");
+        else exMsg("This view can't save files. Use Copy text instead.");});
+    return;
+  }
+  if(t.hasAttribute("data-excopy")){
+    const ta=$("#expreview"), txt=exportData(exFmt);
+    const fallback=()=>{ta.focus();ta.select();exMsg("Text selected. Copy it with your device's Copy command.")};
+    try{navigator.clipboard.writeText(txt).then(()=>exMsg("Copied. Paste it into an email, note, or document."),fallback)}catch(e){fallback()}
+    return;
+  }
+  if(ds.lv){listView=ds.lv;store.set("listView",listView);route();return}
+  if(ds.day!==undefined){selDay=+ds.day;route();return}
+  if(ds.edit){openEditor(ds.edit);return}
+  if(ds.praydays!==undefined){current=["d",ds.praydays];stepIdx=0;showReader();return}
+  if(ds.tday!==undefined){toggle(draft.days,+ds.tday);renderReader();return}
+  if(ds.tcat){toggle(draft.types,ds.tcat);renderReader();return}
+  if(ds.kind){draft.kind=ds.kind;renderReader();return}
+  if(ds.sched){draft.once=ds.sched==="once"?(draft.once||ymd(new Date())):null;renderReader();return}
+  if(t.hasAttribute("data-alldays")){draft.days=draft.days.length===7?[]:[0,1,2,3,4,5,6];renderReader();return}
+  if(t.hasAttribute("data-savep")){
+    draft.name=draft.name.trim();
+    if(!draft.name){const er=$("#perr");er.textContent="Add a name to save.";er.hidden=false;$("#pname").focus();return}
+    if(draft.once===""){const er=$("#perr");er.textContent="Pick a date for this one-time prayer.";er.hidden=false;return}
+    if(draft.once) draft.days=[]; else delete draft.once;
+    const i=PL.people.findIndex(p=>p.id===draft.id);
+    i>=0?PL.people[i]=draft:PL.people.push(draft);
+    plSave(); current=["v",draft.id]; draft=null; showReader(); return;
+  }
+  if(t.hasAttribute("data-delp")){
+    if(!delArm){delArm=true;renderReader();return}
+    PL.people=PL.people.filter(p=>p.id!==draft.id); plSave(); closeReader(); return;
+  }
+  if(ds.cat){openCat=openCat===ds.cat?null:ds.cat;resetArm=null;route();return}
+  if(ds.addv){const c=ds.addv,ri=$("#vref-"+c),r=ri.value.trim(),tx=$("#vtext-"+c).value.trim();
+    if(!r){ri.focus();return}
+    ensureScr(c).push({ref:r,text:tx}); plSave(); route(); return}
+  if(ds.rmv){const [c,i]=ds.rmv.split(":");ensureScr(c).splice(+i,1);plSave();route();return}
+  if(ds.reset){
+    if(resetArm!==ds.reset){resetArm=ds.reset;route();return}
+    if(PL.scripture){delete PL.scripture[ds.reset];if(!Object.keys(PL.scripture).length)PL.scripture=null}
+    resetArm=null; plSave(); route(); return;
+  }
+});
+document.addEventListener("change",e=>{if(e.target.id==="rfile"&&e.target.files&&e.target.files[0]){const fr=new FileReader();fr.onload=()=>loadBackup(String(fr.result||""));fr.onerror=()=>{restoreErr="That file couldn't be read.";route()};fr.readAsText(e.target.files[0]);return}
+  if(e.target.id==="ext"){exToday=e.target.checked;store.set("exToday",exToday);const ta=$("#expreview");if(ta)ta.value=exportData(exFmt)}
+  if(e.target.id==="exv"){exVerses=e.target.checked;store.set("exVerses",exVerses);const ta=$("#expreview");if(ta)ta.value=exportData(exFmt)}});
+document.addEventListener("input",e=>{
+  const id=e.target.id||"";
+  if(id==="pname"&&draft) draft.name=e.target.value;
+  if(id==="pnote"&&draft) draft.note=e.target.value;
+  if(id==="ponce"&&draft) draft.once=e.target.value;
+  if(id.startsWith("vref-")){const a=$("#vlook-"+id.slice(5)); if(a) a.href=e.target.value.trim()?bgLink(e.target.value.trim(),"NKJV"):"https://www.biblegateway.com/"}
+});
+
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-open],[data-filter],[data-mode],[data-step],[data-close],[data-again],[data-switch]");
+  if(!t) return;
+  if(t.dataset.open){openItem(t.dataset.open);return}
+  if(t.dataset.filter){prayerFilter=t.dataset.filter;route();return}
+  if(t.dataset.mode){mode=t.dataset.mode;stepIdx=0;renderReader();return}
+  if(t.dataset.switch){current=["o","pray"];stepIdx=0;renderReader();return}
+  if(t.dataset.step){stepIdx=Math.max(0,stepIdx+ +t.dataset.step);renderReader();$("#reader").scrollTop=0;return}
+  if(t.hasAttribute("data-again")){stepIdx=0;renderReader();return}
+  if(t.hasAttribute("data-close")){closeReader();return}
+});
+$("#back").onclick=closeReader;
+$("#fav").onclick=()=>{
+  const k=current[0]+":"+current[1];
+  favs.has(k)?favs.delete(k):favs.add(k);
+  store.set("favs",[...favs]); renderReader();
+};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&current)closeReader()});
+
+route();
+</script>
+
+<div id="installTip" class="installtip" hidden>
+  <img src="icons/apple-touch-icon.png" alt="" width="44" height="44">
+  <div class="it-text"><b>Put Prayer Book on your Home Screen</b>
+    <span>Tap <svg width="14" height="18" viewBox="0 0 14 18" aria-label="Share" style="vertical-align:-3px"><path d="M7 1v11M3.5 4.5 7 1l3.5 3.5M2 8H1v9h12V8h-1" fill="none" stroke="currentColor" stroke-width="1.6"/></svg> Share, then <b>Add to Home Screen</b>.</span></div>
+  <button id="itClose" aria-label="Dismiss">✕</button>
+</div>
+<style>
+.installtip{position:fixed;left:max(12px,env(safe-area-inset-left,0px));right:max(12px,env(safe-area-inset-right,0px));bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--leaf);color:var(--ink);border:1px solid var(--rule);box-shadow:0 8px 24px rgba(20,50,90,.18);max-width:520px;margin:0 auto}
+.installtip img{border-radius:10px;flex:none}
+.it-text{flex:1;min-width:0;font-size:14px;line-height:1.4;display:flex;flex-direction:column;gap:2px}
+.installtip button{background:none;border:0;font-size:18px;color:var(--muted);padding:6px;cursor:pointer}
+</style>
+<script>
+(function(){
+  var ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+  var standalone=window.navigator.standalone===true||matchMedia("(display-mode: standalone)").matches;
+  var dismissed=false; try{dismissed=localStorage.getItem("pb_installTip")==="no"}catch(e){}
+  var tip=document.getElementById("installTip");
+  if(ios&&!standalone&&!dismissed) tip.hidden=false;
+  document.getElementById("itClose").onclick=function(){tip.hidden=true;try{localStorage.setItem("pb_installTip","no")}catch(e){}};
+  if("serviceWorker" in navigator) window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
+})();
+</script>
+</body>
+</html>
