@@ -176,6 +176,7 @@ a.btn{text-decoration:none;color:var(--ink);display:inline-flex;align-items:cent
 .ask blockquote{margin:6px 0 0;font-family:var(--serif);font-size:calc(20px*var(--scale));line-height:1.5}
 .ask blockquote+blockquote{margin-top:14px}
 .mode{flex-wrap:wrap;max-width:100%}
+.form select.sel{font:inherit;font-size:17px;padding:11px 12px;border-radius:8px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);width:100%}
 .check{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:15px}
 .check input{width:20px;height:20px;accent-color:var(--rubric)}
 .preview{width:100%;font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:13px;line-height:1.5;padding:12px;border-radius:10px;border:1px solid var(--rule);background:var(--leaf);color:var(--ink);resize:vertical;white-space:pre;overflow:auto}
@@ -184,6 +185,21 @@ a.btn{text-decoration:none;color:var(--ink);display:inline-flex;align-items:cent
 .prayerbox .pt{font-family:var(--serif);font-size:calc(20px*var(--scale));line-height:1.45}
 .ask+.ask{padding-top:20px;border-top:1px solid var(--rule)}
 .ask cite{display:block;font-style:normal;font-family:var(--sans);font-size:13px;color:var(--rubric);margin-top:4px;font-weight:600}
+
+/* In the Secret Place */
+.jnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 10px;padding:10px 0;border-block:1px solid var(--rule)}
+.jnav button{width:44px;height:44px;border-radius:50%;border:1px solid var(--rule);font-size:22px;color:var(--rubric);flex:none}
+.jnav>div{text-align:center;flex:1;min-width:0}
+.jdate{font-family:var(--serif);font-size:20px}
+.jsub{font-size:13px;color:var(--muted)}
+.jsec{padding:20px 0;border-bottom:1px solid var(--rule)}
+.jhead{display:flex;gap:14px;align-items:center}
+.jn{font-family:var(--serif);font-size:20px;color:var(--gilt);width:38px;height:38px;border:1.5px solid var(--gilt);border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
+.jt{font-family:var(--serif);font-size:23px;line-height:1.15}
+.jline{font-family:var(--serif);font-style:italic;color:var(--rubric);font-size:16px}
+.jprompt{color:var(--muted);margin:10px 0 8px;line-height:1.45;font-size:15px}
+.jref{font-family:var(--serif);font-size:15.5px;line-height:1.45;color:var(--muted);margin-top:10px}
+.jref b{font-family:var(--sans);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--rubric);margin-right:6px}
 
 /* Home */
 .hero{text-align:center;margin:4px 0 22px}
@@ -404,9 +420,11 @@ const toggle=(a,v)=>{const i=a.indexOf(v);i>=0?a.splice(i,1):a.push(v)};
 const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 const weekDate=i=>{const n=new Date();n.setDate(n.getDate()-n.getDay()+i);return ymd(n)};
 const niceDate=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"})};
-const forDay=d=>PL.people.filter(p=>p.once?p.once===weekDate(d):p.days.includes(d)).sort((a,b)=>a.name.localeCompare(b.name));
+const ordinal=n=>{const s=["th","st","nd","rd"],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0])};
+const monthHit=(p,ds)=>{const [y,m,d]=ds.split("-").map(Number);return d===Math.min(p.monthly,new Date(y,m,0).getDate())};
+const forDay=d=>PL.people.filter(p=>p.once?p.once===weekDate(d):p.monthly?monthHit(p,weekDate(d)):p.days.includes(d)).sort((a,b)=>a.name.localeCompare(b.name));
 const typesOf=p=>p.types.map(t=>CATS.find(c=>c.id===t)).filter(Boolean);
-const daysLabel=p=>p.once?"One time · "+niceDate(p.once)+(p.once<ymd(new Date())?" (past)":""):p.days.length===7?"Every day":!p.days.length?"No day set":p.days.slice().sort().map(d=>DAYS[d]).join(" · ");
+const daysLabel=p=>p.monthly&&!p.once?"Monthly · the "+ordinal(p.monthly):p.once?"One time · "+niceDate(p.once)+(p.once<ymd(new Date())?" (past)":""):p.days.length===7?"Every day":!p.days.length?"No day set":p.days.slice().sort().map(d=>DAYS[d]).join(" · ");
 const initial=s=>(s.trim()[0]||"?").toUpperCase();
 
 /* Saving: your Claude account when available, this device otherwise */
@@ -431,6 +449,8 @@ function rerenderList(){ const h=curTab; if((h==="list"||h==="home") && !current
     const [db,user]=await Promise.all([window.claude.use("db"),window.claude.use("user")]);
     if(!db||!user) return;
     const uid=await user.id(); if(!uid) return;
+    J.col=db.doc("data/users/"+uid+"/journal").collection("entries");
+    if(curTab==="secret"&&!current) jFill(true);
     const ref=db.doc("data/users/"+uid+"/prayerlist");
     let confirmed=false;
     const timer=setTimeout(()=>{if(!confirmed){plStatus="Can't reach your saved list yet. Showing what's on this device.";rerenderList()}},10000);
@@ -611,7 +631,9 @@ function exportData(fmt){
     out.push("");
   };
   DAYS_FULL.forEach((d,i)=>{const g=people.filter(p=>!p.once&&p.days.includes(i));if(!g.length)return;out.push("— "+d.toUpperCase()+" —","");g.forEach(block)});
-  const none=people.filter(p=>!p.once&&!p.days.length);
+  const monthly=people.filter(p=>p.monthly&&!p.once).sort((a,b)=>a.monthly-b.monthly);
+  if(monthly.length){out.push("— MONTHLY —","");monthly.forEach(p=>{out.push("  The "+ordinal(p.monthly)+" of each month");block(p)})}
+  const none=people.filter(p=>!p.once&&!p.monthly&&!p.days.length);
   if(none.length){out.push("— NO DAY SET —","");none.forEach(block)}
   const once=people.filter(p=>p.once).sort((a,b)=>a.once.localeCompare(b.once));
   once.forEach(p=>{out.push("— ONE TIME · "+niceDate(p.once).toUpperCase()+" —","");block(p)});
@@ -641,6 +663,7 @@ function parseBackup(txt){
       name:p.name.trim().slice(0,200),days:Array.isArray(p.days)?[...new Set(p.days.filter(x=>Number.isInteger(x)&&x>=0&&x<7))]:[],
       types:Array.isArray(p.types)?p.types.filter(t=>CATS.some(c=>c.id===t)):[],note:typeof p.note==="string"?p.note.slice(0,2000):""};
     if(typeof p.once==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(p.once)){o.once=p.once;o.days=[]}
+    else if(Number.isInteger(p.monthly)&&p.monthly>=1&&p.monthly<=31){o.monthly=p.monthly;o.days=[]}
     return o;});
   const scripture={};
   if(d.scripture&&typeof d.scripture==="object") CATS.forEach(c=>{const a=d.scripture[c.id];
@@ -681,10 +704,96 @@ function viewList(){
   return `${addTop}<h2 class="sec">My Prayer List</h2><p class="lede">The people and groups you carry, the days you pray for them, and what you're asking God for.</p>${seg}${body}<p class="savenote">${esc(note)}</p>`;
 }
 
+/* ---------- In the Secret Place: personal prayer journal ---------- */
+const JSECS=[
+ {id:"praise",n:"I",t:"Praise & Adoration",line:"Hallowed be thy name.",prompt:"Worship God for who he is: his names, his character, and what he has done.",ph:"Lord, you are…",ref:"Psalm 100:4",v:"Enter into his gates with thanksgiving, and into his courts with praise: be thankful unto him, and bless his name."},
+ {id:"confess",n:"II",t:"Confession",line:"Forgive us our debts.",prompt:"Name your sins honestly, and receive his forgiveness.",ph:"Father, forgive me for…",ref:"1 John 1:9",v:"If we confess our sins, he is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."},
+ {id:"needs",n:"III",t:"My Needs & Requests",line:"Give us this day our daily bread.",prompt:"Bring him your wants and needs, big and small.",ph:"I ask you for…",ref:"Philippians 4:6",v:"Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God."},
+ {id:"protect",n:"IV",t:"Protection & Deliverance",line:"Deliver us from evil.",prompt:"Ask him to guard you, your family, and your mind, and to deliver you from temptation and the enemy.",ph:"Protect me from…",ref:"Psalm 91:2",v:"I will say of the LORD, He is my refuge and my fortress: my God; in him will I trust."},
+ {id:"will",n:"V",t:"Thy Will Be Done",line:"Thy will be done, in earth as it is in heaven.",prompt:"Lay your plans before him and yield to his way.",ph:"Not my will, but yours…",ref:"Luke 22:42",v:"Father, if thou be willing, remove this cup from me: nevertheless not my will, but thine, be done."}
+];
+const J={col:null,cache:{}};
+let jDate=ymd(new Date()), jTimer=null, jSaving=false, jPending=null, jPast=null;
+const jFilled=e=>JSECS.filter(x=>e&&e[x.id]&&String(e[x.id]).trim()).length;
+function jLocalIndex(){return store.get("j_index",[])}
+function jLocalPut(date,e){
+  store.set("j_"+date,e);
+  let idx=jLocalIndex().filter(d=>d!==date); if(jFilled(e)) idx.push(date); store.set("j_index",idx.sort().reverse());
+}
+async function jLoad(date){
+  if(J.cache[date]) return J.cache[date];
+  let e=store.get("j_"+date,null);
+  if(J.col){try{const sn=await J.col.doc(date).get(); if(sn.exists){e=JSON.parse(JSON.stringify(sn.data()))}}catch(_){}}
+  return J.cache[date]=e||{};
+}
+function jStatus(t){const el=$("#jstatus"); if(el) el.textContent=t}
+function jSave(date){
+  const e=J.cache[date]; jLocalPut(date,e); jPast=null; jStatus("Saving…");
+  clearTimeout(jTimer); jTimer=setTimeout(()=>jFlush(date),800);
+}
+async function jFlush(date){
+  if(!J.col){jStatus("Saved on this device");return}
+  if(jSaving){jPending=date;return}
+  jSaving=true;
+  try{const e=J.cache[date]; if(jFilled(e)) await J.col.doc(date).set(Object.assign({},e,{date})); else await J.col.doc(date).delete(); jStatus("Saved"); jPast=null}
+  catch(err){jStatus("Saved on this device")}
+  jSaving=false;
+  if(jPending){const d=jPending;jPending=null;jFlush(d)}
+}
+async function jPastList(){
+  if(J.col){try{const q=await J.col.orderBy("date","desc").limit(60).get();return q.docs.map(d=>d.data())}catch(_){}}
+  return jLocalIndex().slice(0,60).map(d=>Object.assign({date:d},store.get("j_"+d,{})));
+}
+function viewSecret(){
+  const today=ymd(new Date());
+  return `<div class="label" style="margin-top:0">Personal prayer</div>
+  <h2 class="sec">In the Secret Place</h2>
+  <p class="lede"><i>"But thou, when thou prayest, enter into thy closet, and when thou hast shut thy door, pray to thy Father which is in secret."</i> Matthew 6:6</p>
+  <div class="jnav"><button data-jday="-1" aria-label="Previous day">‹</button>
+    <div><div class="jdate">${niceDateLong(jDate)}</div><div class="jsub">${jDate===today?"Today":jDate<today?"Past prayer":"Upcoming"}</div></div>
+    <button data-jday="1" aria-label="Next day">›</button></div>
+  ${JSECS.map(x=>`<section class="jsec">
+    <div class="jhead"><span class="jn">${x.n}</span><div><div class="jt">${x.t}</div><div class="jline">${x.line}</div></div></div>
+    <p class="jprompt">${x.prompt}</p>
+    <div class="form" style="margin-top:0"><textarea id="j-${x.id}" rows="4" placeholder="${x.ph}" aria-label="${x.t}"></textarea></div>
+    <div class="jref"><b>${x.ref}</b> ${x.v}</div></section>`).join("")}
+  <p class="savenote" id="jstatus" style="text-align:left">Loading…</p>
+  ${jDate!==today?`<div class="actions"><button class="btn" data-jtoday>Back to today</button></div>`:""}
+  <div class="label" style="margin-top:30px">Past prayers</div>
+  <div class="list" id="jpast"><p class="lede" style="padding:12px 0;margin:0">Loading…</p></div>`;
+}
+const niceDateLong=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric",year:"numeric"})};
+async function jFill(fresh){
+  const date=jDate; if(fresh) delete J.cache[date];
+  const e=await jLoad(date); if(date!==jDate||curTab!=="secret") return;
+  JSECS.forEach(x=>{const ta=$("#j-"+x.id); if(ta && document.activeElement!==ta) ta.value=e[x.id]||""});
+  jStatus(jFilled(e)?(J.col?"Saved to your Claude account":"Saved on this device"):"Write as much or as little as you like. It saves as you type.");
+  if(!jPast) jPast=await jPastList();
+  const el=$("#jpast"); if(!el||curTab!=="secret") return;
+  const rows=jPast.filter(r=>jFilled(r));
+  el.innerHTML=rows.length?rows.map(r=>{const first=JSECS.map(x=>r[x.id]).find(v=>v&&String(v).trim())||"";
+    return `<button class="item" data-jopen="${esc(r.date)}"><span class="body"><span class="t" style="font-size:18px">${esc(niceDateLong(r.date))}</span>
+    <span class="s">${jFilled(r)} of 5 · ${esc(String(first).slice(0,70))}${String(first).length>70?"…":""}</span></span><span class="chev">›</span></button>`}).join("")
+    :`<p class="lede" style="padding:12px 0;margin:0">Your written prayers will be listed here by date.</p>`;
+}
+function jGo(date){jDate=date;route();window.scrollTo(0,0)}
+document.addEventListener("input",e=>{
+  const id=e.target.id||""; if(!id.startsWith("j-")) return;
+  const k=id.slice(2); const e2=J.cache[jDate]||(J.cache[jDate]={});
+  e2[k]=e.target.value; jSave(jDate);
+});
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-jday],[data-jtoday],[data-jopen]"); if(!t) return;
+  if(t.dataset.jday){const [y,m,d]=jDate.split("-").map(Number);const n=new Date(y,m-1,d+ +t.dataset.jday);jGo(ymd(n));return}
+  if(t.hasAttribute("data-jtoday")){jGo(ymd(new Date()));return}
+  if(t.dataset.jopen){jGo(t.dataset.jopen);return}
+});
+
 function viewHome(){
   const now=new Date(), n=forDay(now.getDay()).length;
   const pod=PRAYERS[dayOfYear()%PRAYERS.length];
   const cards=[
+    ["secret","In the Secret Place","Your own prayer time: praise, confession, your needs, his protection, and his will.",(n=>n?`Today: ${n} of 5 written`:"Begin today's prayer")(jFilled(store.get("j_"+ymd(now),{})))],
     ["list","My Prayer List","The people and groups you pray for, by day, with scripture for each need.",PL.people.length?`Today: ${n} to pray for`:"Start your prayer list"],
     ["prayers","Prayers of the Church",`${PRAYERS.length} prayers from Scripture and the saints.`,"Prayer of the day: "+pod.title],
     ["psalms","Praying the Psalms","Read a psalm whole, or pray it verse by verse.","Today: Psalms "+todaysPsalms().join(", ")],
@@ -695,13 +804,14 @@ function viewHome(){
     <p>${now.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})}</p></div>
   ${cards.map(([k,t,d,e])=>`<a class="pick" href="#${k}"><b>${t}</b><span>${d}</span><em>${esc(e)}</em></a>`).join("")}`;
 }
-const VIEWS={home:viewHome,prayers:viewPrayers,psalms:viewPsalms,ourfather:viewOurFather,paul:viewPaul,list:viewList};
+const VIEWS={home:viewHome,secret:viewSecret,prayers:viewPrayers,psalms:viewPsalms,ourfather:viewOurFather,paul:viewPaul,list:viewList};
 function route(){
   let tab=curTab;
   if(!VIEWS[tab]) tab=curTab="home";
   document.body.dataset.page=tab;
   $("#view").innerHTML=VIEWS[tab]();
-  document.querySelectorAll("nav.tabs a").forEach(a=>a.setAttribute("aria-current",a.dataset.tab===tab?"page":"false"));
+  document.querySelectorAll("nav.tabs a").forEach(a=>a.setAttribute("aria-current",a.dataset.tab===(tab==="secret"?"home":tab)?"page":"false"));
+  if(tab==="secret") jFill();
   const nm=$("#prayfor"); if(nm) nm.addEventListener("input",e=>store.set("name",e.target.value.trim()));
 }
 window.addEventListener("hashchange",()=>{const h=(location.hash||"#home").slice(1);if(VIEWS[h]&&h!==curTab){curTab=h;route();window.scrollTo(0,0)}});
@@ -830,8 +940,10 @@ function renderEditor(){
     <label for="pname">${grp?"Group name":"Name"}</label>
     <input id="pname" type="text" value="${esc(d.name)}" placeholder="${grp?"e.g. Our Sunday school class":"e.g. Pastor Mike"}" autocomplete="off">
     <div class="flabel">When to pray</div>
-    <div class="mode" role="group" aria-label="Weekly or one time" style="margin-top:0">${[["weekly","Weekly"],["once","One time"]].map(([k,l])=>`<button data-sched="${k}" aria-pressed="${(k==="once")===!!d.once}">${l}</button>`).join("")}</div>
+    <div class="mode" role="group" aria-label="How often" style="margin-top:0">${[["weekly","Weekly"],["monthly","Monthly"],["once","One time"]].map(([k,l])=>`<button data-sched="${k}" aria-pressed="${k===(d.once?"once":d.monthly?"monthly":"weekly")}">${l}</button>`).join("")}</div>
     ${d.once?`<label for="ponce">Date</label><input id="ponce" type="date" value="${d.once}">`
+    :d.monthly?`<label for="pmonth">Day of the month</label><select id="pmonth" class="sel">${Array.from({length:31},(_,i)=>`<option value="${i+1}" ${d.monthly===i+1?"selected":""}>The ${ordinal(i+1)}</option>`).join("")}</select>
+    <p class="lede" style="margin:0;font-size:14px">In shorter months, a date like the 31st falls on the last day of the month.</p>`
     :`<div class="flabel">Days to pray <button class="linkish" data-alldays>${d.days.length===7?"Clear days":"Every day"}</button></div>
     <div class="chips" style="margin:0">${DAYS.map((x,i)=>`<button class="chip" data-tday="${i}" aria-pressed="${d.days.includes(i)}">${x}</button>`).join("")}</div>`}
     <div class="flabel">What to pray for</div>
@@ -920,13 +1032,16 @@ document.addEventListener("click",e=>{
   if(ds.tday!==undefined){toggle(draft.days,+ds.tday);renderReader();return}
   if(ds.tcat){toggle(draft.types,ds.tcat);renderReader();return}
   if(ds.kind){draft.kind=ds.kind;renderReader();return}
-  if(ds.sched){draft.once=ds.sched==="once"?(draft.once||ymd(new Date())):null;renderReader();return}
+  if(ds.sched){const k=ds.sched;
+    draft.once=k==="once"?(draft.once||ymd(new Date())):null;
+    draft.monthly=k==="monthly"?(draft.monthly||+(listView==="today"?weekDate(selDay):ymd(new Date())).split("-")[2]):null;
+    renderReader();return}
   if(t.hasAttribute("data-alldays")){draft.days=draft.days.length===7?[]:[0,1,2,3,4,5,6];renderReader();return}
   if(t.hasAttribute("data-savep")){
     draft.name=draft.name.trim();
     if(!draft.name){const er=$("#perr");er.textContent="Add a name to save.";er.hidden=false;$("#pname").focus();return}
     if(draft.once===""){const er=$("#perr");er.textContent="Pick a date for this one-time prayer.";er.hidden=false;return}
-    if(draft.once) draft.days=[]; else delete draft.once;
+    if(draft.once){draft.days=[];delete draft.monthly} else if(draft.monthly){draft.days=[];delete draft.once} else {delete draft.once;delete draft.monthly}
     const i=PL.people.findIndex(p=>p.id===draft.id);
     i>=0?PL.people[i]=draft:PL.people.push(draft);
     plSave(); current=["v",draft.id]; draft=null; showReader(); return;
@@ -954,6 +1069,7 @@ document.addEventListener("input",e=>{
   if(id==="pname"&&draft) draft.name=e.target.value;
   if(id==="pnote"&&draft) draft.note=e.target.value;
   if(id==="ponce"&&draft) draft.once=e.target.value;
+  if(id==="pmonth"&&draft) draft.monthly=+e.target.value;
   if(id.startsWith("vref-")){const a=$("#vlook-"+id.slice(5)); if(a) a.href=e.target.value.trim()?bgLink(e.target.value.trim(),"NKJV"):"https://www.biblegateway.com/"}
 });
 
