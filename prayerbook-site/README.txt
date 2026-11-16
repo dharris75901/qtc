@@ -3,7 +3,8 @@ PRAYER BOOK - HOSTING ON YOUR OWN SITE
 1. Upload everything in this folder (index.html, manifest.webmanifest, sw.js,
    and the icons folder) to a GitHub repo or a folder on your site,
    e.g. qtchallenge.com/prayerbook/ . Keep the files together as they are.
-2. On iPhone, open the address in Safari. A tip at the bottom shows how to
+2. On iPhone, open the address in Safari and tap the blue "Add to Home Screen"
+   button for step-by-step help. In short:
    add it: Share button > Add to Home Screen. The blue cross-and-book icon
    is used, and it opens full screen like an app.
 3. On Android/Chrome and desktop Chrome/Edge, an Install option appears in
