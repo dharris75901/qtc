@@ -37,8 +37,8 @@ h2{font-size:1.05rem;margin:0 0 8px;font-weight:600}
 .row .x{font:inherit;background:none;border:0;color:var(--mute);font-size:1.3rem;width:44px;height:44px}
 textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px}
 textarea{min-height:120px;resize:vertical}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
-.chip{font:inherit;font-size:.9rem;padding:8px 12px;min-height:40px;border-radius:20px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.chips{display:flex;flex-wrap:nowrap;gap:6px;margin:12px 0}
+.chip{flex:1 1 0;min-width:0;font:inherit;font-size:.85rem;padding:8px 2px;min-height:40px;text-align:center;border-radius:20px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
 .chip[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .btn{font:inherit;font-weight:600;padding:12px 18px;min-height:46px;border-radius:10px;border:0;background:var(--accent);color:var(--accent-ink);width:100%}
 .empty{color:var(--mute);margin:0}
@@ -58,6 +58,10 @@ textarea{min-height:120px;resize:vertical}
 .moremenu{position:fixed;right:8px;bottom:calc(62px + env(safe-area-inset-bottom,0px));min-width:210px;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.18);padding:6px;z-index:10}
 .moremenu[hidden]{display:none}
 .btn:disabled{opacity:.45}
+select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;min-height:44px;width:100%}
+.ffgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 10px}.ffgrid .wide{grid-column:1/-1}
+.btn2{font:inherit;font-size:.9rem;color:var(--accent);background:none;border:1px solid var(--line);border-radius:20px;padding:8px 14px;min-height:40px;margin:6px 8px 0 0}
+.ffe .ref{font-weight:600;margin:0}.ffe .sub{margin:0 0 8px}.ffe .tx{white-space:pre-wrap}
 .hero{text-align:center;margin:8px 0 22px}
 .hero img{width:88px;height:88px;border-radius:20px;display:block;margin:0 auto 12px}
 .pick{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:12px;padding:14px 16px;margin:0 0 12px;min-height:72px}
@@ -81,7 +85,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
 <div class="moremenu" id="moremenu" role="menu" hidden></div>
 <script>
 var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var LABELS={quiet:'31 Day Proverbs Challenge',gospel:'3 Month Gospel Challenge',nt:'6 Month NT Challenge',ot:'1 Year OT Challenge',prayer:'Prayer'};
+var LABELS={quiet:'31 Day Proverbs Challenge',gospel:'3 Month Gospel Challenge',nt:'6 Month NT Challenge',ot:'1 Year OT Challenge',prayer:'Prayer',psalms:'Psalms in 30 Days',chron:'Chronological Bible in a Year'};
 var TABS={quiet:'31 Day Proverbs',gospel:'3 Month Gospels',nt:'6 Month NT',ot:'1 Year OT',prayer:'Prayer',more:'More'};
 var GOS=[['Matthew',28],['Mark',16],['Luke',24],['John',21]];
 var mem=null;
@@ -135,7 +139,7 @@ function streakBar(){
   function bx(label,s){return h('div',{class:'streak'},[h('b',{text:s.cur+(s.cur===1?' day':' days')}),h('span',{text:label}),h('span',{text:'Best: '+s.best,style:'display:block'})])}
   return h('div',{class:'streaks'},[bx('Challenge streak',c),bx('Prayer streak',p)]);
 }
-var MORE=[['home','Home'],['plans','Challenges'],['qt','Quiet Time'],['music','Music'],['results','Results'],['export','Export']];
+var MORE=[['home','Home'],['plans','Challenges'],['qt','Quiet Time'],['music','Music'],['free','Free Form'],['results','Results'],['export','Export']];
 function moreBtn(){return document.querySelector('#tabs [data-t="more"]')}
 function closeMenu(){document.getElementById('moremenu').hidden=true;moreBtn().setAttribute('aria-expanded','false')}
 function toggleMenu(){
@@ -156,13 +160,18 @@ function journalSections(){
   function dateOf(str){var p=str.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])}
   var pro=Object.keys(N).filter(function(k){return dre.test(k)&&txt(k)}).map(function(k){return {d:dateOf(k),k:k}}).sort(function(a,b){return a.d-b.d}).map(function(o){return {head:dFmt(o.d)+' — Proverbs '+o.d.getDate(),text:txt(o.k)}});
   secs.push({id:'quiet',title:LABELS.quiet,items:pro});
-  [['gospel',LABELS.gospel,GOS.map(function(g){return [g[0],g[1],1]}),'gospel-'],['nt',LABELS.nt,NT,'nt-'],['ot',LABELS.ot,OT,'ot-']].forEach(function(x){
+  [['gospel',LABELS.gospel,GOS.map(function(g){return [g[0],g[1],1]}),'gospel-'],['nt',LABELS.nt,NT,'nt-'],['ot',LABELS.ot,OT,'ot-'],['psalms',LABELS.psalms,[['Psalms',150,5]],'ps-']].forEach(function(x){
     var L=planLabels(x[2]),items=[];
     for(var n=1;n<L.length;n++){var t=txt(x[3]+n);if(t)items.push({head:'Day '+n+': '+L[n],text:t})}
     secs.push({id:x[0],title:x[1],items:items});
   });
+  var cdays=chronDays(),citems=[];
+  cdays.forEach(function(d){var t=txt('ch-'+d.n);if(t)citems.push({head:'Day '+d.n+': '+d.label,text:t})});
+  secs.push({id:'chron',title:LABELS.chron,items:citems});
   var pj=Object.keys(N).filter(function(k){return k.indexOf('pj-')===0&&txt(k)}).map(function(k){return {d:dateOf(k.slice(3)),k:k}}).sort(function(a,b){return a.d-b.d}).map(function(o){return {head:dFmt(o.d),text:txt(o.k)}});
   secs.push({id:'prayer',title:'Prayer Journal',items:pj});
+  var ff2=(data.free||[]).slice().sort(function(a,b){return a.ts-b.ts}).filter(function(e){return (e.text||'').trim()}).map(function(e){return {head:dFmt(new Date(e.ts))+' — '+e.ref+' ('+e.ver+')',text:e.text.trim()}});
+  secs.push({id:'free',title:'Free Form Journal',items:ff2});
   var old=(data.qt||[]).slice().reverse().map(function(e){return {head:new Date(e.ts).toLocaleString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}),text:(e.text||'').trim()}}).filter(function(e){return e.text});
   if(old.length)secs.push({id:'old',title:'Other Quiet Time entries',items:old});
   return secs.filter(function(x){return x.items.length});
@@ -191,7 +200,7 @@ function copyText(ta,done){
 function exportPage(){
   var box=document.createDocumentFragment(),secs=journalSections();
   box.appendChild(h('h2',{class:'ptitle',text:'Export'}));
-  if(!secs.length){box.appendChild(h('p',{class:'empty',text:'No journal entries yet. Entries you write on the challenge pages and the Prayer page will show up here.'}));return box}
+  if(!secs.length){box.appendChild(h('p',{class:'empty',text:'No journal entries yet. Entries you write on the challenge pages, the Prayer page, and Free Form will show up here.'}));return box}
   box.appendChild(h('p',{class:'sub',text:'Save your journal entries as a text file, or copy them to paste into an email or document.'}));
   var card=h('div',{class:'card',style:'margin-top:14px'},[h('h2',{text:'Choose journals'})]);
   var ta=h('textarea',{'aria-label':'Export preview',readonly:'readonly',style:'min-height:240px'});
@@ -224,7 +233,9 @@ function homePage(){
     ['quiet','One chapter of Proverbs each day, matching the day of the month.','Today: Proverbs '+today0().getDate()],
     ['gospel','Matthew, Mark, Luke, and John, one chapter a day.',prog((data.gdone||[]).length,gT)],
     ['nt','The whole New Testament: one chapter a day through the Gospels, then two a day.',prog((data.ndone||[]).length,nT)],
-    ['ot','The whole Old Testament, two or three chapters a day.',prog((data.odone||[]).length,oT)]
+    ['ot','The whole Old Testament, two or three chapters a day.',prog((data.odone||[]).length,oT)],
+    ['psalms','All 150 Psalms, five a day.',prog((data.pdone||[]).length,30)],
+    ['chron','The whole Bible in the order the events happened.',prog((data.cdone||[]).length,365)]
   ].forEach(function(c){
     var b=h('button',{class:'pick',type:'button'},[h('b',{text:LABELS[c[0]]}),h('span',{text:c[1]}),h('em',{text:c[2]})]);
     b.onclick=function(){tab=c[0];render()};
@@ -308,6 +319,137 @@ function musicPage(){
   box.appendChild(h('div',{class:'card read'},[h('h2',{text:'Song of the day'}),h('p',{class:'ref',text:sg[0]}),h('p',{class:'sub',style:'margin:2px 0 6px',text:sg[1]}),h('a',{class:'esv',href:url,target:'_blank',rel:'noopener',text:'Open my Amazon Music playlist'})]));
   return box;
 }
+var ff={book:'',ch:'',vs:'',ref:'',text:'',edit:null,msg:'',del:null};
+function lookupUrl(ref,v){
+  var r=ref.replace(/^\s*Psalms\b/i,'Psalm').replace(/[–—]/g,'-');
+  return v==='ESV'?'https://www.esv.org/'+encodeURI(r.replace(/\s+/g,'+'))+'/':'https://www.biblegateway.com/passage/?search='+encodeURIComponent(r)+'&version='+v;
+}
+function parseRef(ref){ref=ref.replace(/^\s*Psalm\b/i,'Psalms');var m=/^(.*?)(?:\s+(\d+)(?::(.+))?)?$/.exec(ref),bk=OT.concat(NT).some(function(b){return b[0]===m[1]});return {book:bk?m[1]:'',ch:bk&&m[2]?m[2]:'',vs:bk&&m[3]?m[3]:''}}
+function freePage(){
+  var box=document.createDocumentFragment(),books=OT.concat(NT);
+  box.appendChild(h('h2',{class:'ptitle',text:'Free Form Journal'}));
+  var bs=h('select',{'aria-label':'Book'},[h('option',{value:'',text:'Book'})]);
+  books.forEach(function(b){bs.appendChild(h('option',{value:b[0],text:b[0]}))});
+  var cs=h('select',{'aria-label':'Chapter'});
+  var vi=h('input',{type:'text','aria-label':'Verses',placeholder:'Verses (16-21)'});
+  var ri=h('input',{type:'text','aria-label':'Passage reference',placeholder:'Or type it here, e.g. John 3:16',autocapitalize:'words'});
+  function fillCh(){
+    cs.textContent='';cs.appendChild(h('option',{value:'',text:'Chapter'}));
+    var b=books.filter(function(x){return x[0]===ff.book})[0];
+    if(b)for(var i=1;i<=b[1];i++)cs.appendChild(h('option',{value:String(i),text:String(i)}));
+    cs.value=ff.ch;
+  }
+  function build(){ff.ref=ff.book?ff.book+(ff.ch?' '+ff.ch+(ff.vs?':'+ff.vs:''):''):'';ri.value=ff.ref}
+  bs.value=ff.book;fillCh();vi.value=ff.vs;ri.value=ff.ref;
+  bs.onchange=function(){ff.book=bs.value;ff.ch='';ff.vs='';vi.value='';fillCh();build()};
+  cs.onchange=function(){ff.ch=cs.value;build()};
+  vi.oninput=function(){ff.vs=vi.value.trim();build()};
+  ri.oninput=function(){ff.ref=ri.value};
+  var msg=h('p',{class:'saved',text:ff.msg});ff.msg='';
+  var look=h('button',{class:'btn',type:'button',text:'Look up'});
+  look.onclick=function(){
+    var r=ri.value.trim();
+    if(!r){msg.textContent='Choose or type a passage first.';return}
+    var w=window.open(lookupUrl(r,ver()),'_blank','noopener');
+    msg.textContent=w?'':'Your browser blocked the new tab. Please allow pop-ups and try again.';
+  };
+  var kids=[h('h2',{text:'Choose a passage'})];
+  var t0=new Date();t0.setHours(0,0,0,0);
+  var all=(data.free||[]).slice().sort(function(a,b){return b.ts-a.ts}),prev=all.filter(function(e){return e.ts<t0.getTime()})[0]||all[0];
+  if(prev&&!ff.edit){
+    var yd=new Date(t0);yd.setDate(yd.getDate()-1);
+    var pd=new Date(prev.ts);pd.setHours(0,0,0,0);
+    var when=pd.getTime()===yd.getTime()?'yesterday':pd.getTime()===t0.getTime()?'earlier today':pd.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+    var cb=h('button',{class:'btn2',type:'button',style:'display:block;width:100%;margin:0 0 12px;text-align:left',text:'Continue from '+when+': '+prev.ref});
+    cb.onclick=function(){var pr=parseRef(prev.ref);ff.book=pr.book;ff.ch=pr.ch;ff.vs=pr.vs;ff.ref=prev.ref;data.ver=prev.ver;save();var y=window.scrollY;render();window.scrollTo(0,y)};
+    kids.push(cb);
+  }
+  box.appendChild(h('div',{class:'card read'},kids.concat([
+    h('div',{class:'ffgrid'},[h('div',{class:'wide'},[bs]),h('div',{},[cs]),h('div',{},[vi])]),
+    ri,verBar(),look])));
+  var ta=h('textarea',{'aria-label':'Journal entry',placeholder:'Write your journal entry here...'});
+  ta.value=ff.text;ta.oninput=function(){ff.text=ta.value};
+  var sv=h('button',{class:'btn',type:'button',text:ff.edit?'Save changes':'Save entry'});
+  sv.onclick=function(){
+    var r=ri.value.trim(),t=ta.value.trim();
+    if(!r){msg.textContent='Choose or type a passage before saving.';return}
+    if(!t){msg.textContent='Write your journal entry before saving.';return}
+    data.free=data.free||[];
+    if(ff.edit){data.free.forEach(function(e){if(e.id===ff.edit){e.ref=r;e.ver=ver();e.text=t}})}
+    else data.free.push({id:Date.now(),ts:Date.now(),ref:r,ver:ver(),text:t});
+    save();
+    ff={book:'',ch:'',vs:'',ref:'',text:'',edit:null,msg:'Saved: '+r,del:null};
+    render();
+  };
+  var jc=h('div',{class:'card'},[h('h2',{text:'Journal'}),ta,sv]);
+  if(ff.edit){var cn=h('button',{class:'btn2',type:'button',text:'Cancel editing'});cn.onclick=function(){ff={book:'',ch:'',vs:'',ref:'',text:'',edit:null,msg:'',del:null};render()};jc.appendChild(cn)}
+  jc.appendChild(msg);
+  box.appendChild(jc);
+  var list=(data.free||[]).slice().sort(function(a,b){return b.ts-a.ts});
+  box.appendChild(h('h2',{class:'ptitle',text:'Saved entries'}));
+  if(!list.length)box.appendChild(h('p',{class:'empty',text:'Your saved entries will show up here, each with its passage.'}));
+  list.forEach(function(e){
+    var c=h('div',{class:'card ffe'},[h('p',{class:'ref',text:e.ref}),h('p',{class:'sub',text:e.ver+' · '+dFmt(new Date(e.ts))}),h('p',{class:'tx',text:e.text})]);
+    var rd=h('a',{class:'btn2',href:lookupUrl(e.ref,e.ver),target:'_blank',rel:'noopener',text:'Read',style:'display:inline-block;text-decoration:none;line-height:22px'});
+    var ed=h('button',{class:'btn2',type:'button',text:'Edit'});
+    ed.onclick=function(){
+      var pr=parseRef(e.ref);
+      ff={book:pr.book,ch:pr.ch,vs:pr.vs,ref:e.ref,text:e.text,edit:e.id,msg:'',del:null};
+      data.ver=e.ver;save();render();window.scrollTo(0,0);
+    };
+    var dl=h('button',{class:'btn2',type:'button',text:ff.del===e.id?'Tap again to delete':'Delete'});
+    dl.onclick=function(){
+      if(ff.del===e.id){data.free=data.free.filter(function(x){return x.id!==e.id});if(ff.edit===e.id)ff.edit=null;ff.del=null;save();render()}
+      else{ff.del=e.id;var y=window.scrollY;render();window.scrollTo(0,y)}
+    };
+    [rd,ed,dl].forEach(function(b){c.appendChild(b)});
+    box.appendChild(c);
+  });
+  return box;
+}
+var CD=[[["Genesis","1-4"]],[["Genesis","5-7"]],[["Genesis","8-10"]],[["Genesis","11"],["Job","1-3"]],[["Job","4-6"]],[["Job","7-9"]],[["Job","10-12"]],[["Job","13-16"]],[["Job","17-19"]],[["Job","20-22"]],[["Job","23-25"]],[["Job","26-29"]],[["Job","30-32"]],[["Job","33-35"]],[["Job","36-38"]],[["Job","39-42"]],[["Genesis","12-14"]],[["Genesis","15-17"]],[["Genesis","18-20"]],[["Genesis","21-24"]],[["Genesis","25-27"]],[["Genesis","28-30"]],[["Genesis","31-33"]],[["Genesis","34-37"]],[["Genesis","38-40"]],[["Genesis","41-43"]],[["Genesis","44-46"]],[["Genesis","47-50"]],[["Exodus","1-3"]],[["Exodus","4-6"]],[["Exodus","7-9"]],[["Exodus","10-13"]],[["Exodus","14-16"]],[["Exodus","17-19"]],[["Exodus","20-23"]],[["Exodus","24-26"]],[["Exodus","27-29"]],[["Exodus","30-32"]],[["Exodus","33-36"]],[["Exodus","37-39"]],[["Exodus","40"],["Leviticus","1-2"]],[["Leviticus","3-5"]],[["Leviticus","6-9"]],[["Leviticus","10-12"]],[["Leviticus","13-15"]],[["Leviticus","16-18"]],[["Leviticus","19-22"]],[["Leviticus","23-25"]],[["Leviticus","26-27"],["Numbers","1"]],[["Numbers","2-4"]],[["Numbers","5-8"]],[["Numbers","9-11"]],[["Numbers","12-14"]],[["Numbers","15-17"]],[["Numbers","18-21"]],[["Numbers","22-24"]],[["Numbers","25-27"]],[["Numbers","28-30"]],[["Numbers","31-34"]],[["Numbers","35-36"],["Deuteronomy","1"]],[["Deuteronomy","2-4"]],[["Deuteronomy","5-7"]],[["Deuteronomy","8-11"]],[["Deuteronomy","12-14"]],[["Deuteronomy","15-17"]],[["Deuteronomy","18-20"]],[["Deuteronomy","21-24"]],[["Deuteronomy","25-27"]],[["Deuteronomy","28-30"]],[["Deuteronomy","31-34"]],[["Psalms","90"],["Joshua","1-2"]],[["Joshua","3-5"]],[["Joshua","6-8"]],[["Joshua","9-12"]],[["Joshua","13-15"]],[["Joshua","16-18"]],[["Joshua","19-21"]],[["Joshua","22-24"],["Judges","1"]],[["Judges","2-4"]],[["Judges","5-7"]],[["Judges","8-10"]],[["Judges","11-14"]],[["Judges","15-17"]],[["Judges","18-20"]],[["Judges","21"],["Ruth","1-2"]],[["Ruth","3-4"],["1 Samuel","1-2"]],[["1 Samuel","3-5"]],[["1 Samuel","6-8"]],[["1 Samuel","9-11"]],[["1 Samuel","12-15"]],[["1 Samuel","16-18"]],[["1 Samuel","19-21"]],[["1 Samuel","22-24"]],[["1 Samuel","25-28"]],[["1 Samuel","29-31"]],[["2 Samuel","1-3"]],[["2 Samuel","4-6"]],[["2 Samuel","7-10"]],[["2 Samuel","11-13"]],[["2 Samuel","14-16"]],[["2 Samuel","17-20"]],[["2 Samuel","21-23"]],[["2 Samuel","24"],["1 Chronicles","1-2"]],[["1 Chronicles","3-5"]],[["1 Chronicles","6-9"]],[["1 Chronicles","10-12"]],[["1 Chronicles","13-15"]],[["1 Chronicles","16-18"]],[["1 Chronicles","19-22"]],[["1 Chronicles","23-25"]],[["1 Chronicles","26-28"]],[["1 Chronicles","29"],["Psalms","1-2"]],[["Psalms","3-6"]],[["Psalms","7-9"]],[["Psalms","10-12"]],[["Psalms","13-15"]],[["Psalms","16-19"]],[["Psalms","20-22"]],[["Psalms","23-25"]],[["Psalms","26-28"]],[["Psalms","29-32"]],[["Psalms","33-35"]],[["Psalms","36-38"]],[["Psalms","39-41"]],[["Psalms","42-45"]],[["Psalms","46-48"]],[["Psalms","49-51"]],[["Psalms","52-54"]],[["Psalms","55-58"]],[["Psalms","59-61"]],[["Psalms","62-64"]],[["Psalms","65-67"]],[["Psalms","68-71"]],[["Psalms","72"],["1 Kings","1-2"]],[["1 Kings","3-5"]],[["1 Kings","6-9"]],[["1 Kings","10-11"],["2 Chronicles","1"]],[["2 Chronicles","2-4"]],[["2 Chronicles","5-7"]],[["2 Chronicles","8-9"],["Song of Solomon","1-2"]],[["Song of Solomon","3-5"]],[["Song of Solomon","6-8"]],[["Proverbs","1-3"]],[["Proverbs","4-7"]],[["Proverbs","8-10"]],[["Proverbs","11-13"]],[["Proverbs","14-16"]],[["Proverbs","17-20"]],[["Proverbs","21-23"]],[["Proverbs","24-26"]],[["Proverbs","27-29"]],[["Proverbs","30-31"],["Ecclesiastes","1-2"]],[["Ecclesiastes","3-5"]],[["Ecclesiastes","6-8"]],[["Ecclesiastes","9-11"]],[["Ecclesiastes","12"],["1 Kings","12-14"]],[["1 Kings","15-17"]],[["1 Kings","18-20"]],[["1 Kings","21-22"],["2 Chronicles","10"]],[["2 Chronicles","11-14"]],[["2 Chronicles","15-17"]],[["2 Chronicles","18-20"]],[["Obadiah","1"],["2 Kings","1-2"]],[["2 Kings","3-6"]],[["2 Kings","7-8"],["Joel","1"]],[["Joel","2-3"],["2 Kings","9"]],[["2 Kings","10-13"]],[["2 Kings","14"],["2 Chronicles","21-22"]],[["2 Chronicles","23-25"]],[["Jonah","1-3"]],[["Jonah","4"],["Amos","1-3"]],[["Amos","4-6"]],[["Amos","7-9"]],[["Hosea","1-3"]],[["Hosea","4-7"]],[["Hosea","8-10"]],[["Hosea","11-13"]],[["Hosea","14"],["2 Kings","15-16"]],[["2 Chronicles","26-28"],["Micah","1"]],[["Micah","2-4"]],[["Micah","5-7"]],[["Isaiah","1-3"]],[["Isaiah","4-7"]],[["Isaiah","8-10"]],[["Isaiah","11-13"]],[["Isaiah","14-16"]],[["Isaiah","17-20"]],[["Isaiah","21-23"]],[["Isaiah","24-26"]],[["Isaiah","27-29"]],[["Isaiah","30-33"]],[["Isaiah","34-36"]],[["Isaiah","37-39"]],[["Isaiah","40-42"]],[["Isaiah","43-46"]],[["Isaiah","47-49"]],[["Isaiah","50-52"]],[["Isaiah","53-55"]],[["Isaiah","56-59"]],[["Isaiah","60-62"]],[["Isaiah","63-65"]],[["Isaiah","66"],["2 Kings","17-19"]],[["2 Kings","20"],["2 Chronicles","29-30"]],[["2 Chronicles","31-32"],["2 Kings","21"]],[["2 Chronicles","33"],["Nahum","1-2"]],[["Nahum","3"],["2 Kings","22-23"],["2 Chronicles","34"]],[["2 Chronicles","35"],["Zephaniah","1-2"]],[["Zephaniah","3"],["Jeremiah","1-2"]],[["Jeremiah","3-5"]],[["Jeremiah","6-9"]],[["Jeremiah","10-12"]],[["Jeremiah","13-15"]],[["Jeremiah","16-18"]],[["Jeremiah","19-22"]],[["Jeremiah","23-25"]],[["Jeremiah","26-28"]],[["Jeremiah","29-31"]],[["Jeremiah","32-35"]],[["Jeremiah","36-38"]],[["Jeremiah","39-41"]],[["Jeremiah","42-44"]],[["Jeremiah","45-48"]],[["Jeremiah","49-51"]],[["Jeremiah","52"],["Habakkuk","1-2"]],[["Habakkuk","3"],["2 Kings","24-25"]],[["2 Chronicles","36"],["Lamentations","1-3"]],[["Lamentations","4-5"],["Psalms","73"]],[["Psalms","74-76"]],[["Psalms","77-79"]],[["Psalms","80-83"]],[["Psalms","84-86"]],[["Psalms","87-89"]],[["Ezekiel","1-4"]],[["Ezekiel","5-7"]],[["Ezekiel","8-10"]],[["Ezekiel","11-13"]],[["Ezekiel","14-17"]],[["Ezekiel","18-20"]],[["Ezekiel","21-23"]],[["Ezekiel","24-26"]],[["Ezekiel","27-30"]],[["Ezekiel","31-33"]],[["Ezekiel","34-36"]],[["Ezekiel","37-39"]],[["Ezekiel","40-43"]],[["Ezekiel","44-46"]],[["Ezekiel","47-48"],["Daniel","1"]],[["Daniel","2-4"]],[["Daniel","5-8"]],[["Daniel","9-11"]],[["Daniel","12"],["Ezra","1-2"]],[["Ezra","3-5"]],[["Ezra","6"],["Haggai","1-2"],["Zechariah","1"]],[["Zechariah","2-4"]],[["Zechariah","5-7"]],[["Zechariah","8-10"]],[["Zechariah","11-14"]],[["Esther","1-3"]],[["Esther","4-6"]],[["Esther","7-9"]],[["Esther","10"],["Ezra","7-9"]],[["Ezra","10"],["Nehemiah","1-2"]],[["Nehemiah","3-5"]],[["Nehemiah","6-8"]],[["Nehemiah","9-12"]],[["Nehemiah","13"],["Malachi","1-2"]],[["Malachi","3-4"],["Psalms","91"]],[["Psalms","92-95"]],[["Psalms","96-98"]],[["Psalms","99-101"]],[["Psalms","102-104"]],[["Psalms","105-108"]],[["Psalms","109-111"]],[["Psalms","112-114"]],[["Psalms","115-117"]],[["Psalms","118-121"]],[["Psalms","122-124"]],[["Psalms","125-127"]],[["Psalms","128-130"]],[["Psalms","131-134"]],[["Psalms","135-137"]],[["Psalms","138-140"]],[["Psalms","141-143"]],[["Psalms","144-147"]],[["Psalms","148-150"]],[["Luke","1"],["Luke","3:23-38"],["John","1:1-18"],["Matthew","1:1-17"]],[["Matthew","1:18-3:12"],["Luke","2:1-3:20"],["Mark","1:1-8"]],[["Matthew","3:13-4:11"],["Mark","1:9-13"],["Luke","3:21-22"],["Luke","4:1-13"],["John","1:19-4:42"]],[["Matthew","4:12-25"],["Matthew","8:1-4"],["Matthew","8:14-17"],["Mark","1:14-45"],["Luke","4:14-5:16"],["John","4:43-54"]],[["Matthew","9:1-17"],["Matthew","12:1-8"],["Mark","2"],["Luke","5:17-6:5"],["John","5"]],[["Matthew","5-7"],["Matthew","12:9-21"],["Mark","3:1-19"],["Luke","6:6-49"]],[["Matthew","8:5-13"],["Matthew","11:2-30"],["Luke","7:1-8:3"]],[["Matthew","12:22-13:52"],["Mark","3:20-4:34"],["Luke","8:4-21"]],[["Matthew","8:18-34"],["Matthew","9:18-34"],["Matthew","13:53-58"],["Mark","4:35-6:6"],["Luke","8:22-56"]],[["Matthew","9:35-11:1"],["Matthew","14:1-21"],["Mark","6:7-44"],["Luke","9:1-17"],["John","6:1-15"]],[["Matthew","14:22-15:28"],["Mark","6:45-7:30"],["John","6:16-71"]],[["Matthew","15:29-17:21"],["Mark","7:31-9:29"],["Luke","9:18-43"]],[["Matthew","17:22-18:35"],["Mark","9:30-50"],["Luke","9:44-62"],["John","7:1-52"]],[["John","7:53-10:21"]],[["Luke","10-12"]],[["Luke","13-15"],["John","10:22-42"]],[["Luke","16:1-18:14"],["John","11"]],[["Matthew","19-20"],["Mark","10"],["Luke","18:15-43"]],[["Luke","19"],["Matthew","21:1-22"],["Matthew","26:6-13"],["Mark","11:1-26"],["Mark","14:3-9"],["John","12:1-19"]],[["Matthew","21:23-22:33"],["Mark","11:27-12:27"],["Luke","20:1-40"]],[["Matthew","22:34-24:51"],["Mark","12:28-13:37"],["Luke","20:41-21:38"],["John","12:20-50"]],[["Matthew","25"]],[["Matthew","26:1-5"],["Matthew","26:14-35"],["Mark","14:1-2"],["Mark","14:10-31"],["Luke","22:1-38"],["John","13-14"]],[["John","15:1-18:1"],["Matthew","26:36-46"],["Mark","14:32-42"],["Luke","22:39-46"]],[["Matthew","26:47-27:14"],["Mark","14:43-15:5"],["Luke","22:47-23:5"],["John","18:2-38"]],[["Luke","23:6-49"],["Matthew","27:15-56"],["Mark","15:6-41"],["John","18:39-19:37"]],[["Matthew","27:57-28:15"],["Mark","15:42-16:13"],["Luke","23:50-24:35"],["John","19:38-20:18"]],[["Mark","16:14-20"],["Luke","24:36-53"],["John","20:19-21:25"],["Matthew","28:16-20"],["Acts","1-2"]],[["Acts","3-5"]],[["Acts","6-9"]],[["Acts","10-12"]],[["James","1-3"]],[["James","4-5"],["Acts","13"]],[["Acts","14"],["Galatians","1-3"]],[["Galatians","4-6"]],[["Acts","15-17"]],[["Acts","18"],["1 Thessalonians","1-2"]],[["1 Thessalonians","3-5"],["2 Thessalonians","1"]],[["2 Thessalonians","2-3"],["Acts","19"]],[["1 Corinthians","1-3"]],[["1 Corinthians","4-6"]],[["1 Corinthians","7-10"]],[["1 Corinthians","11-13"]],[["1 Corinthians","14-16"]],[["2 Corinthians","1-3"]],[["2 Corinthians","4-7"]],[["2 Corinthians","8-10"]],[["2 Corinthians","11-13"]],[["Acts","20"],["Romans","1-3"]],[["Romans","4-6"]],[["Romans","7-9"]],[["Romans","10-12"]],[["Romans","13-16"]],[["Acts","21-23"]],[["Acts","24-26"]],[["Acts","27-28"],["Ephesians","1"]],[["Ephesians","2-5"]],[["Ephesians","6"],["Philippians","1-2"]],[["Philippians","3-4"],["Colossians","1"]],[["Colossians","2-4"]],[["Philemon","1"],["1 Timothy","1-3"]],[["1 Timothy","4-6"]],[["Titus","1-3"]],[["1 Peter","1-3"]],[["1 Peter","4-5"],["2 Timothy","1-2"]],[["2 Timothy","3-4"],["Hebrews","1"]],[["Hebrews","2-4"]],[["Hebrews","5-7"]],[["Hebrews","8-11"]],[["Hebrews","12-13"],["2 Peter","1"]],[["2 Peter","2-3"],["Jude","1"]],[["1 John","1-3"]],[["1 John","4-5"],["2 John","1"],["3 John","1"]],[["Revelation","1-3"]],[["Revelation","4-6"]],[["Revelation","7-9"]],[["Revelation","10-13"]],[["Revelation","14-16"]],[["Revelation","17-19"]],[["Revelation","20-22"]]];
+var chronCache=null,MLEN=[31,28,31,30,31,30,31,31,30,31,30,31];
+function chronDays(){
+  if(chronCache)return chronCache;
+  chronCache=CD.map(function(ps,i){var parts=ps.map(function(q){return {b:q[0],c:q[1]}});return {n:i+1,parts:parts,label:parts.map(function(q){return q.b+' '+q.c.replace('-','\u2013')}).join('; ')}});
+  return chronCache;
+}
+function chronGroup(n){var s=0;for(var m=0;m<12;m++){if(n<=s+MLEN[m])return 'Month '+(m+1)+' (Days '+(s+1)+'–'+(s+MLEN[m])+')';s+=MLEN[m]}}
+function psalmsPage(){return planPage({t:LABELS.psalms,books:[['Psalms',150,5]],dk:'pdone',nk:'ps-',ip:'s',sub:'Five Psalms a day for 30 days.'})}
+function chronPage(){
+  var box=document.createDocumentFragment(),days=chronDays(),done=data.cdone||[];
+  var list=days.map(function(d){return {n:d.n,b:chronGroup(d.n),parts:d.parts,label:d.label}});
+  var next=list.filter(function(x){return done.indexOf(x.n)<0})[0];
+  function rlink(q,txt){var a=readLink(q.b,q.c);a.textContent=txt;return a}
+  box.appendChild(h('h2',{class:'ptitle',text:LABELS.chron}));
+  box.appendChild(h('p',{class:'sub',text:'The whole Bible in the order the events happened, about three or four chapters a day. The four Gospels are blended into one story of Jesus\u2019s life. '+done.length+' of 365 days complete.'}));
+  var up=h('div',{class:'card read',style:'margin-top:16px'},[h('h2',{text:'Up next'})]);
+  if(next){
+    up.appendChild(h('p',{class:'ref',text:'Day '+next.n+': '+next.label}));up.appendChild(verBar());
+    next.parts.forEach(function(q){var a=rlink(q,'Read '+q.b+' '+q.c.replace('-','–')+' in the '+ver());a.style.display='block';up.appendChild(a)});
+  }else up.appendChild(h('p',{class:'ref',text:'Challenge complete!'}));
+  box.appendChild(up);
+  if(next){
+    var nk='ch-'+next.n,nta=h('textarea',{'aria-label':'Journal entry for day '+next.n,placeholder:'Write your journal entry here...'});
+    nta.value=data.notes[nk]||'';
+    var nsv=h('p',{class:'saved'});
+    nta.oninput=function(){data.notes[nk]=nta.value;save();nsv.textContent='Saved'};
+    box.appendChild(h('div',{class:'card'},[h('h2',{text:'Journal for Day '+next.n}),nta,nsv]));
+  }
+  var names=[];list.forEach(function(x){if(names.indexOf(x.b)<0)names.push(x.b)});
+  names.forEach(function(g){
+    var card=bookCard('c',g,list,done,next);
+    list.filter(function(x){return x.b===g}).forEach(function(x){
+      var id='c'+x.n,cb=h('input',{type:'checkbox',id:id}),on=done.indexOf(x.n)>-1;cb.checked=on;
+      cb.onchange=function(){var a=(data.cdone||[]).filter(function(v){return v!==x.n});if(cb.checked)a.push(x.n);data.cdone=a;logAct('cdone',x.n,cb.checked);save();var y=window.scrollY;render();window.scrollTo(0,y)};
+      var links=h('div',{style:'display:flex;flex-direction:column;align-items:flex-end;font-size:.85rem'});
+      x.parts.forEach(function(q){var a=rlink(q,x.parts.length===1?'Read':'Read '+q.b+' '+q.c.replace('-','–'));a.style.lineHeight='28px';a.style.minHeight='28px';links.appendChild(a)});
+      card.appendChild(h('div',{class:'row'+(on?' done':'')},[cb,h('label',{for:id,text:'Day '+x.n+': '+x.label}),links]));
+    });
+    box.appendChild(card);
+  });
+  return box;
+}
 function resultsPage(){
   var box=document.createDocumentFragment();
   box.appendChild(h('h2',{class:'ptitle',text:'Results'}));
@@ -319,7 +461,7 @@ function plansPage(){
   var box=document.createDocumentFragment();
   box.appendChild(h('h2',{class:'ptitle',text:'Challenges'}));
   box.appendChild(h('div',{class:'card read'},[h('h2',{text:'Take the Challenge'}),
-    h('p',{text:'Choose where to start: the 31 Day Proverbs Challenge, the 3 Month Gospel Challenge, the 6 Month NT Challenge, or the 1 Year OT Challenge.'}),
+    h('p',{text:'Choose where to start: the 31 Day Proverbs Challenge, the 3 Month Gospel Challenge, the 6 Month NT Challenge, the 1 Year OT Challenge, Psalms in 30 Days, or the Chronological Bible in a Year.'}),
     h('p',{text:'Each day:'}),
     h('ol',{class:'rules'},[h('li',{text:'Read the day’s passage.'}),h('li',{text:'Write a simple journal entry.'}),h('li',{text:'Pray for someone other than yourself.'})])]));
   box.appendChild(h('div',{class:'card'},[h('h2',{text:'Your prayer list'}),
@@ -330,7 +472,7 @@ function plansPage(){
   var em=h('a',{class:'esv',href:'mailto:qtbiblechallenge@gmail.com?subject=My%20Challenge%20Experience',text:'qtbiblechallenge@gmail.com'});
   var p=h('p',{});p.appendChild(document.createTextNode('When you finish a challenge, tell us about your experience. Email us and let us know how it went: '));p.appendChild(em);
   box.appendChild(h('div',{class:'card'},[h('h2',{text:'Share your experience'}),p]));
-  box.appendChild(h('div',{class:'card'},[h('h2',{text:'Other challenges'}),h('p',{text:'One way to fill a full year without the Old Testament is to start with the 31 Day Proverbs Challenge, then the 3 Month Gospel Challenge, then the 31 Day Proverbs Challenge again, then the 6 Month NT Challenge, and finish with the 31 Day Proverbs Challenge once more. You will read Proverbs three times (you can switch Bible versions each time) and the Gospels twice.'}),h('p',{text:'You can always repeat a challenge using a different translation.'})]));
+  box.appendChild(h('div',{class:'card'},[h('h2',{text:'Other challenges'}),h('p',{text:'One way to fill a full year without the Old Testament is to start with the 31 Day Proverbs Challenge, then the 3 Month Gospel Challenge, then the 31 Day Proverbs Challenge again, then the 6 Month NT Challenge, and finish with the 31 Day Proverbs Challenge once more. You will read Proverbs three times (you can switch Bible versions each time) and the Gospels twice.'}),h('p',{text:'For a shorter plan, try Psalms in 30 Days. To read the whole Bible in the order the events happened, try the Chronological Bible in a Year.'}),h('p',{text:'You can always repeat a challenge using a different translation.'})]));
   return box;
 }
 function gospel(){
@@ -519,8 +661,8 @@ function people(){
 }
 function render(){
   var a=document.getElementById('app');a.textContent='';
-  a.appendChild(tab==='home'?homePage():tab==='quiet'?quiet():tab==='gospel'?gospel():tab==='nt'?ntplan():tab==='ot'?otplan():tab==='qt'?qtPage():tab==='plans'?plansPage():tab==='results'?resultsPage():tab==='music'?musicPage():tab==='export'?exportPage():prayer());
-  var hl=(tab==='plans'||tab==='qt'||tab==='results'||tab==='export'||tab==='music')?'more':tab;
+  a.appendChild(tab==='home'?homePage():tab==='quiet'?quiet():tab==='gospel'?gospel():tab==='nt'?ntplan():tab==='ot'?otplan():tab==='qt'?qtPage():tab==='plans'?plansPage():tab==='results'?resultsPage():tab==='music'?musicPage():tab==='psalms'?psalmsPage():tab==='chron'?chronPage():tab==='free'?freePage():tab==='export'?exportPage():prayer());
+  var hl=(tab==='plans'||tab==='qt'||tab==='results'||tab==='export'||tab==='music'||tab==='free'||tab==='psalms'||tab==='chron')?'more':tab;
   Array.prototype.forEach.call(document.querySelectorAll('#tabs button'),function(b){
     if(b.dataset.t===hl)b.setAttribute('aria-current','true');else b.removeAttribute('aria-current');
     b.textContent=TABS[b.dataset.t];
@@ -532,7 +674,7 @@ render();
 </script>
 <!-- Add to Home Screen helper -->
 <style>
-#a2hs-btn{position:fixed;right:12px;bottom:calc(68px + env(safe-area-inset-bottom));z-index:2147483000;background:#2f6fdf;color:#fff;border:none;border-radius:999px;padding:9px 14px;font:600 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer}
+#a2hs-btn{position:fixed;right:12px;bottom:calc(68px + env(safe-area-inset-bottom));z-index:5;background:#2f6fdf;color:#fff;border:none;border-radius:999px;padding:9px 14px;font:600 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer}
 #a2hs-overlay{display:none;position:fixed;inset:0;z-index:2147483001;background:rgba(0,0,0,.5);overflow-y:auto;padding:20px 14px calc(20px + env(safe-area-inset-bottom))}
 #a2hs-overlay.open{display:block}
 #a2hs-box{max-width:520px;margin:0 auto;background:#fff;color:#1f2933;border-radius:16px;padding:18px 18px 8px;font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;text-align:left}
