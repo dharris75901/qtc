@@ -1,21 +1,4 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#F3F8FD" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0F1A26" media="(prefers-color-scheme: dark)">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Prayer Book">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
-<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
-<link rel="manifest" href="manifest.webmanifest">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
-</head>
-<body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Prayer Book</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -201,6 +184,8 @@ a.btn{text-decoration:none;color:var(--ink);display:inline-flex;align-items:cent
 .jref{font-family:var(--serif);font-size:15.5px;line-height:1.45;color:var(--muted);margin-top:10px}
 .jref b{font-family:var(--sans);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--rubric);margin-right:6px}
 
+.credit{text-align:center;font-size:11.5px;color:var(--muted);opacity:.7;margin-top:40px;letter-spacing:.02em}
+
 /* Home */
 .hero{text-align:center;margin:4px 0 22px}
 .hero img{width:88px;height:88px;border-radius:20px;display:block;margin:0 auto 12px;box-shadow:0 6px 18px rgba(30,70,120,.18)}
@@ -225,6 +210,7 @@ body[data-page="home"] header.top{border-bottom-color:transparent;margin-bottom:
     </div>
   </header>
   <main id="view"></main>
+  <footer class="credit">© 2026 Dwayne Harris · Created by Dwayne Harris</footer>
 </div>
 
 <nav class="tabs" aria-label="Sections"><div class="in">
@@ -1094,7 +1080,6 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&current)closeReader
 
 route();
 </script>
-
 <!-- Add to Home Screen helper -->
 <style>
 #a2hs-btn{position:fixed;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));z-index:2147483000;background:#2f6fdf;color:#fff;border:none;border-radius:999px;padding:9px 14px;font:600 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer}
@@ -1149,8 +1134,5 @@ body:has(#reader:not([hidden])) #a2hs-btn{display:none}
 })();
 </script>
 <!-- /Add to Home Screen helper -->
-<script>
-if("serviceWorker" in navigator) window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});
-</script>
-</body>
-</html>
+
+</body></html>
