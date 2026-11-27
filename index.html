@@ -321,31 +321,34 @@ function musicPage(){
   box.appendChild(h('div',{class:'card read'},[h('h2',{text:'Song of the day'}),h('p',{class:'ref',text:sg[0]}),h('p',{class:'sub',style:'margin:2px 0 6px',text:sg[1]}),h('a',{class:'esv',href:url,target:'_blank',rel:'noopener',text:'Open my Amazon Music playlist'})]));
   return box;
 }
-var ff={book:'',ch:'',vs:'',ref:'',text:'',edit:null,msg:'',del:null};
+var ff={book:'',ch:'',ch2:'',ref:'',text:'',edit:null,msg:'',del:null};
 function lookupUrl(ref,v){
   var r=ref.replace(/^\s*Psalms\b/i,'Psalm').replace(/[–—]/g,'-');
   return v==='ESV'?'https://www.esv.org/'+encodeURI(r.replace(/\s+/g,'+'))+'/':'https://www.biblegateway.com/passage/?search='+encodeURIComponent(r)+'&version='+v;
 }
-function parseRef(ref){ref=ref.replace(/^\s*Psalm\b/i,'Psalms');var m=/^(.*?)(?:\s+(\d+)(?::(.+))?)?$/.exec(ref),bk=OT.concat(NT).some(function(b){return b[0]===m[1]});return {book:bk?m[1]:'',ch:bk&&m[2]?m[2]:'',vs:bk&&m[3]?m[3]:''}}
+function parseRef(ref){ref=ref.replace(/^\s*Psalm\b/i,'Psalms');var m=/^(.*?)(?:\s+(\d+)(?::\d+(?:-\d+)?)?(?:-(\d+))?)?$/.exec(ref),bk=OT.concat(NT).some(function(b){return b[0]===m[1]});return {book:bk?m[1]:'',ch:bk&&m[2]?m[2]:'',ch2:bk&&m[2]&&m[3]?m[3]:''}}
 function freePage(){
   var box=document.createDocumentFragment(),books=OT.concat(NT);
   box.appendChild(h('h2',{class:'ptitle',text:'Free Form Journal'}));
   var bs=h('select',{'aria-label':'Book'},[h('option',{value:'',text:'Book'})]);
   books.forEach(function(b){bs.appendChild(h('option',{value:b[0],text:b[0]}))});
   var cs=h('select',{'aria-label':'Chapter'});
-  var vi=h('input',{type:'text','aria-label':'Verses',placeholder:'Verses (16-21)'});
-  var ri=h('input',{type:'text','aria-label':'Passage reference',placeholder:'Or type it here, e.g. John 3:16',autocapitalize:'words'});
+  var vi=h('select',{'aria-label':'To chapter (optional)'});
+  var ri=h('input',{type:'text','aria-label':'Passage reference',placeholder:'Or type it, e.g. John 3 or John 3-5',autocapitalize:'words'});
   function fillCh(){
     cs.textContent='';cs.appendChild(h('option',{value:'',text:'Chapter'}));
     var b=books.filter(function(x){return x[0]===ff.book})[0];
     if(b)for(var i=1;i<=b[1];i++)cs.appendChild(h('option',{value:String(i),text:String(i)}));
     cs.value=ff.ch;
+    vi.textContent='';vi.appendChild(h('option',{value:'',text:'To chapter (optional)'}));
+    if(b&&ff.ch)for(var j=+ff.ch+1;j<=b[1];j++)vi.appendChild(h('option',{value:String(j),text:String(j)}));
+    vi.value=ff.ch2;
   }
-  function build(){ff.ref=ff.book?ff.book+(ff.ch?' '+ff.ch+(ff.vs?':'+ff.vs:''):''):'';ri.value=ff.ref}
-  bs.value=ff.book;fillCh();vi.value=ff.vs;ri.value=ff.ref;
-  bs.onchange=function(){ff.book=bs.value;ff.ch='';ff.vs='';vi.value='';fillCh();build()};
-  cs.onchange=function(){ff.ch=cs.value;build()};
-  vi.oninput=function(){ff.vs=vi.value.trim();build()};
+  function build(){ff.ref=ff.book?ff.book+(ff.ch?' '+ff.ch+(ff.ch2?'-'+ff.ch2:''):''):'';ri.value=ff.ref}
+  bs.value=ff.book;fillCh();ri.value=ff.ref;
+  bs.onchange=function(){ff.book=bs.value;ff.ch='';ff.ch2='';fillCh();build()};
+  cs.onchange=function(){ff.ch=cs.value;ff.ch2='';fillCh();build()};
+  vi.onchange=function(){ff.ch2=vi.value;build()};
   ri.oninput=function(){ff.ref=ri.value};
   var msg=h('p',{class:'saved',text:ff.msg});ff.msg='';
   var look=h('button',{class:'btn',type:'button',text:'Look up'});
@@ -363,7 +366,7 @@ function freePage(){
     var pd=new Date(prev.ts);pd.setHours(0,0,0,0);
     var when=pd.getTime()===yd.getTime()?'yesterday':pd.getTime()===t0.getTime()?'earlier today':pd.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
     var cb=h('button',{class:'btn2',type:'button',style:'display:block;width:100%;margin:0 0 12px;text-align:left',text:'Continue from '+when+': '+prev.ref});
-    cb.onclick=function(){var pr=parseRef(prev.ref);ff.book=pr.book;ff.ch=pr.ch;ff.vs=pr.vs;ff.ref=prev.ref;data.ver=prev.ver;save();var y=window.scrollY;render();window.scrollTo(0,y)};
+    cb.onclick=function(){var pr=parseRef(prev.ref);ff.book=pr.book;ff.ch=pr.ch;ff.ch2=pr.ch2;ff.ref=prev.ref;data.ver=prev.ver;save();var y=window.scrollY;render();window.scrollTo(0,y)};
     kids.push(cb);
   }
   box.appendChild(h('div',{class:'card read'},kids.concat([
@@ -380,11 +383,11 @@ function freePage(){
     if(ff.edit){data.free.forEach(function(e){if(e.id===ff.edit){e.ref=r;e.ver=ver();e.text=t}})}
     else data.free.push({id:Date.now(),ts:Date.now(),ref:r,ver:ver(),text:t});
     save();
-    ff={book:'',ch:'',vs:'',ref:'',text:'',edit:null,msg:'Saved: '+r,del:null};
+    ff={book:'',ch:'',ch2:'',ref:'',text:'',edit:null,msg:'Saved: '+r,del:null};
     render();
   };
   var jc=h('div',{class:'card'},[h('h2',{text:'Journal'}),ta,sv]);
-  if(ff.edit){var cn=h('button',{class:'btn2',type:'button',text:'Cancel editing'});cn.onclick=function(){ff={book:'',ch:'',vs:'',ref:'',text:'',edit:null,msg:'',del:null};render()};jc.appendChild(cn)}
+  if(ff.edit){var cn=h('button',{class:'btn2',type:'button',text:'Cancel editing'});cn.onclick=function(){ff={book:'',ch:'',ch2:'',ref:'',text:'',edit:null,msg:'',del:null};render()};jc.appendChild(cn)}
   jc.appendChild(msg);
   box.appendChild(jc);
   var list=(data.free||[]).slice().sort(function(a,b){return b.ts-a.ts});
@@ -396,7 +399,7 @@ function freePage(){
     var ed=h('button',{class:'btn2',type:'button',text:'Edit'});
     ed.onclick=function(){
       var pr=parseRef(e.ref);
-      ff={book:pr.book,ch:pr.ch,vs:pr.vs,ref:e.ref,text:e.text,edit:e.id,msg:'',del:null};
+      ff={book:pr.book,ch:pr.ch,ch2:pr.ch2,ref:e.ref,text:e.text,edit:e.id,msg:'',del:null};
       data.ver=e.ver;save();render();window.scrollTo(0,0);
     };
     var dl=h('button',{class:'btn2',type:'button',text:ff.del===e.id?'Tap again to delete':'Delete'});
